@@ -1,0 +1,11 @@
+target
+.idea
+.prefs
+migration.log
+debug.log
+.factorypath
+.classpath
+.settings
+.project
+
+
