@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.neotys</groupId>
-		<artifactId>neotys-apis-root</artifactId>
-		<version>1.0.7</version>
+		<artifactId>super-pom</artifactId>
+		<version>3.1.18</version>
 	</parent>
 	<groupId>com.neotys.amqp</groupId>
 	<artifactId>neotys-advanced-action-amqp</artifactId>
