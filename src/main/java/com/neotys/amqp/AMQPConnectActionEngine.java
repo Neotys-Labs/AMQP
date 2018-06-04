@@ -80,7 +80,7 @@ public final class AMQPConnectActionEngine implements ActionEngine {
 		final Object cachedChannel = context.getCurrentVirtualUser().get(channelName);		
 		if (cachedChannel instanceof Channel) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONNECTION, "A AMQP channel already exists with name " + channelName + ".");
-		} else if (cachedAMQPConnection == null) {
+		} else if (cachedChannel == null) {
 			Channel amqpChannel = null;
 			try {
 				amqpChannel = amqpConnection.createChannel();
