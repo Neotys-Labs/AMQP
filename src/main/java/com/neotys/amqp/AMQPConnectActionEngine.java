@@ -59,16 +59,15 @@ public final class AMQPConnectActionEngine implements ActionEngine {
 			connectionFactory.setVirtualHost(parsedArgs.get(VIRTUALHOST.getName()).get());
 		}
 
+		Connection connection = null;
 		try {
-			final Connection connection = (Connection) connectionFactory.newConnection();
-
-			// Put Connection in the context of the VU, so it could be retrieved further
-			context.getCurrentVirtualUser().put(connectionName, connection);
-
+			connection = connectionFactory.newConnection();			
 			return newOkResult(context, request, "Connected to AMQP server.");
 
 		} catch (final Exception e) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONNECTION, "Cannot create connection to AMQP server", e);
+		} finally {
+			context.getCurrentVirtualUser().put(connectionName, connection);			
 		}
 	}	
 

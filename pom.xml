@@ -2,16 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>amqp</artifactId>
-	<name>amqp</name>
-	<version>0.0.1-SNAPSHOT</version>
-
 	<parent>
 		<groupId>com.neotys</groupId>
-		<artifactId>super-pom</artifactId>
-		<version>3.1.18</version>
+		<artifactId>neotys-apis-root</artifactId>
+		<version>1.0.7</version>
 	</parent>
-
+	<groupId>com.neotys.amqp</groupId>
+	<artifactId>neotys-advanced-action-amqp</artifactId>
+	<version>0.0.1-SNAPSHOT</version>	
+	
 	<properties>
 		<neoload.installation.folder>C:/Users/srichert/Documents/NeoLoad Projects/v6.4/RabbitMQ/lib</neoload.installation.folder>
 	</properties> 
