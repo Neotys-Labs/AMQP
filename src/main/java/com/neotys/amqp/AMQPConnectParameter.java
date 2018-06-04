@@ -19,7 +19,7 @@ import com.neotys.extensions.action.ActionParameter.Type;
  */
 public enum AMQPConnectParameter implements Option {
 
-	CONNECTIONNAME("connectionName", Required, True, TEXT, "amqpConnection", "Name of the AMQP connection", NON_EMPTY),
+	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "Name of the AMQP channel to be refereced in further usage", NON_EMPTY),
 	HOSTNAME("hostname", Required, True, TEXT, "localhost", "AMQP server hostname or IP address", NON_EMPTY),
 	PORT("port", Required, True, TEXT, "5672", "AMQP server port", INTEGER_VALIDATOR),	
 	USERNAME("username", Optional, False, TEXT, "", "Username to connect to the AMQP server", ALWAYS_VALID),
