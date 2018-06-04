@@ -1,43 +1,63 @@
 package com.neotys.amqp;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import com.google.common.base.Optional;
+import com.neotys.action.argument.Arguments;
+import com.neotys.action.argument.Option.AppearsByDefault;
 import com.neotys.extensions.action.Action;
 import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.ActionEngine;
 
-public final class AMQPAction implements Action{
+public final class AMQPConnectAction implements Action{
 	private static final String BUNDLE_NAME = "com.neotys.amqp.bundle";
 	private static final String DISPLAY_NAME = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault()).getString("displayName");
 	private static final String DISPLAY_PATH = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault()).getString("displayPath");
 
 	@Override
 	public String getType() {
-		return "AMQP";
+		return "AMQPConnect";
 	}
 
 	@Override
 	public List<ActionParameter> getDefaultActionParameters() {
-		final List<ActionParameter> parameters = new ArrayList<ActionParameter>();
-		// TODO Add default parameters.
+		final ArrayList<ActionParameter> parameters = new ArrayList<>();
+
+		for (final AMQPConnectParameter option : AMQPConnectParameter.values()) {
+			if (AppearsByDefault.True.equals(option.getAppearsByDefault())) {
+				parameters.add(new ActionParameter(option.getName(), option.getDefaultValue(),
+						option.getType()));
+			}
+		}
+
 		return parameters;
 	}
 
 	@Override
 	public Class<? extends ActionEngine> getEngineClass() {
-		return AMQPActionEngine.class;
+		return AMQPConnectActionEngine.class;
+	}
+		
+	private static final ImageIcon LOGO_ICON;
+	static {
+		final URL iconURL = AMQPConnectAction.class.getResource("connection.png");
+		if (iconURL != null) {
+			LOGO_ICON = new ImageIcon(iconURL);
+		} else {
+			LOGO_ICON = null;
+		}
 	}
 
 	@Override
 	public Icon getIcon() {
-		// TODO Add an icon
-		return null;
+		return LOGO_ICON;
 	}
 
 	@Override
@@ -47,11 +67,7 @@ public final class AMQPAction implements Action{
 
 	@Override
 	public String getDescription() {
-		final StringBuilder description = new StringBuilder();
-		// TODO Add description
-		description.append("AMQP description.\n");
-
-		return description.toString();
+		return "Connects to a AMQP server.\n\n" + Arguments.getArgumentDescriptions(AMQPConnectParameter.values());
 	}
 
 	@Override
@@ -66,7 +82,7 @@ public final class AMQPAction implements Action{
 
 	@Override
 	public Optional<String> getMinimumNeoLoadVersion() {
-		return Optional.absent();
+		return Optional.of("6.4");// TODO seb 6.6
 	}
 
 	@Override
