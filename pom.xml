@@ -12,7 +12,7 @@
 	<version>0.0.1-SNAPSHOT</version>	
 	
 	<properties>
-		<neoload.installation.folder>C:/Users/srichert/Documents/NeoLoad Projects/v6.4/RabbitMQ/lib</neoload.installation.folder>
+		<neoload.installation.folder>C:/Documents/2018/AMQPS/NeoLoadProject/lib</neoload.installation.folder>
 	</properties> 
 	
 	<dependencies>

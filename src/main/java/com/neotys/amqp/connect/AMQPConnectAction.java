@@ -1,4 +1,4 @@
-package com.neotys.amqp;
+package com.neotys.amqp.connect;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -9,17 +9,16 @@ import java.util.ResourceBundle;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import com.google.common.base.Optional;
 import com.neotys.action.argument.Arguments;
 import com.neotys.action.argument.Option.AppearsByDefault;
-import com.neotys.extensions.action.Action;
+import com.neotys.amqp.common.AMQPAction;
 import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.ActionEngine;
 
-public final class AMQPConnectAction implements Action{
-	private static final String BUNDLE_NAME = "com.neotys.amqp.bundle";
-	private static final String DISPLAY_NAME = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault()).getString("displayName");
-	private static final String DISPLAY_PATH = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault()).getString("displayPath");
+public final class AMQPConnectAction extends AMQPAction {
+	
+	private static final String DISPLAY_NAME = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault()).getString("connect.displayName");
+	private static final String DISPLAY_PATH = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault()).getString("connect.displayPath");
 
 	@Override
 	public String getType() {
@@ -30,10 +29,10 @@ public final class AMQPConnectAction implements Action{
 	public List<ActionParameter> getDefaultActionParameters() {
 		final ArrayList<ActionParameter> parameters = new ArrayList<>();
 
-		for (final AMQPConnectParameter option : AMQPConnectParameter.values()) {
-			if (AppearsByDefault.True.equals(option.getAppearsByDefault())) {
-				parameters.add(new ActionParameter(option.getName(), option.getDefaultValue(),
-						option.getType()));
+		for (final AMQPConnectParameter parameter : AMQPConnectParameter.values()) {
+			if (AppearsByDefault.True.equals(parameter.getOption().getAppearsByDefault())) {
+				parameters.add(new ActionParameter(parameter.getOption().getName(), parameter.getOption().getDefaultValue(),
+						parameter.getOption().getType()));
 			}
 		}
 
@@ -47,7 +46,7 @@ public final class AMQPConnectAction implements Action{
 		
 	private static final ImageIcon LOGO_ICON;
 	static {
-		final URL iconURL = AMQPConnectAction.class.getResource("connection.png");
+		final URL iconURL = AMQPConnectAction.class.getResource("connect.png");
 		if (iconURL != null) {
 			LOGO_ICON = new ImageIcon(iconURL);
 		} else {
@@ -67,7 +66,7 @@ public final class AMQPConnectAction implements Action{
 
 	@Override
 	public String getDescription() {
-		return "Connects to a AMQP server.\n\n" + Arguments.getArgumentDescriptions(AMQPConnectParameter.values());
+		return "Connects to a AMQP server.\n\n" + Arguments.getArgumentDescriptions(AMQPConnectParameter.getOptions());
 	}
 
 	@Override
@@ -78,15 +77,5 @@ public final class AMQPConnectAction implements Action{
 	@Override
 	public String getDisplayPath() {
 		return DISPLAY_PATH;
-	}
-
-	@Override
-	public Optional<String> getMinimumNeoLoadVersion() {
-		return Optional.of("6.4");// TODO seb 6.6
-	}
-
-	@Override
-	public Optional<String> getMaximumNeoLoadVersion() {
-		return Optional.absent();
-	}
+	}	
 }
