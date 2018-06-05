@@ -22,7 +22,7 @@ import com.neotys.extensions.action.ActionParameter.Type;
  * @author srichert
  * @date 4 juin 2018
  */
-public enum AMQPConnectParameter {
+enum AMQPConnectParameter {
 
 	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "Name of the AMQP channel to be refereced in further usage", NON_EMPTY),
 	HOSTNAME("hostname", Required, True, TEXT, "localhost", "AMQP server hostname or IP address", NON_EMPTY),
