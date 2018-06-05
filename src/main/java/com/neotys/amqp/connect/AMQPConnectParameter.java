@@ -27,8 +27,8 @@ enum AMQPConnectParameter {
 	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "Name of the AMQP channel to be refereced in further usage", NON_EMPTY),
 	HOSTNAME("hostname", Required, True, TEXT, "localhost", "AMQP server hostname or IP address", NON_EMPTY),
 	PORT("port", Required, True, TEXT, "5672", "AMQP server port", INTEGER_VALIDATOR),	
-	USERNAME("username", Optional, False, TEXT, "", "Username to connect to the AMQP server", ALWAYS_VALID),
-	PASSWORD("password", Optional, False, TEXT, "", "Password to connect to the AMQP server", ALWAYS_VALID),
+	USERNAME("username", Optional, False, TEXT, "", "Username to connect to the AMQP server.", ALWAYS_VALID),
+	PASSWORD("password", Optional, False, TEXT, "", "Password to connect to the AMQP server.", ALWAYS_VALID),
 	VIRTUALHOST("virtualHost", Optional, False, TEXT, "/", "Virtual host", ALWAYS_VALID);
 
 	private final AMQPParameterOption option;

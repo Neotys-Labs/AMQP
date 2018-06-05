@@ -26,8 +26,7 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 
 	private static final String STATUS_CODE_INVALID_PARAMETER = "NL-AMQP-CONNECT-ACTION-01";
 	private static final String STATUS_CODE_ERROR_CONNECTION = "NL-AMQP-CONNECT-ACTION-02";
-	private static final String AMQP_CONNECTION_KEY = "AMQPConnectionKey";
-
+	
 	@Override
 	public SampleResult execute(final com.neotys.extensions.action.engine.Context context, final List<ActionParameter> parameters) {
 

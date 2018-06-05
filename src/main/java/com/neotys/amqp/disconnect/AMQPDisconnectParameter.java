@@ -1,7 +1,7 @@
 package com.neotys.amqp.disconnect;
 import static com.neotys.action.argument.DefaultArgumentValidator.NON_EMPTY;
-import static com.neotys.action.argument.Option.AppearsByDefault.True;
-import static com.neotys.action.argument.Option.OptionalRequired.Required;
+import static com.neotys.action.argument.Option.AppearsByDefault.False;
+import static com.neotys.action.argument.Option.OptionalRequired.Optional;
 import static com.neotys.extensions.action.ActionParameter.Type.TEXT;
 
 import java.util.Arrays;
@@ -20,7 +20,7 @@ import com.neotys.extensions.action.ActionParameter.Type;
  */
 enum AMQPDisconnectParameter {
 
-	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "Name of the AMQP channel to disconnect", NON_EMPTY);	
+	CHANNELNAME("channelName", Optional, False, TEXT, "myAMQPChannel", "Name of the AMQP channel to disconnect", NON_EMPTY);	
 
 	private final AMQPParameterOption option;
 	

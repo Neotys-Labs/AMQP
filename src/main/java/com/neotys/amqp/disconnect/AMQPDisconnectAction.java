@@ -67,7 +67,7 @@ public final class AMQPDisconnectAction extends AMQPAction {
 
 	@Override
 	public String getDescription() {
-		return "Disconnects from a AMQP server.\n\n" + Arguments.getArgumentDescriptions(AMQPDisconnectParameter.getOptions());
+		return "Disconnects a channel or all channels from an AMQP server.\n" + Arguments.getArgumentDescriptions(AMQPDisconnectParameter.getOptions());
 	}
 
 	@Override

@@ -66,7 +66,7 @@ public final class AMQPConnectAction extends AMQPAction {
 
 	@Override
 	public String getDescription() {
-		return "Connects to a AMQP server.\n\n" + Arguments.getArgumentDescriptions(AMQPConnectParameter.getOptions());
+		return "Connects to an AMQP server to create a channel.\n" + Arguments.getArgumentDescriptions(AMQPConnectParameter.getOptions());
 	}
 
 	@Override

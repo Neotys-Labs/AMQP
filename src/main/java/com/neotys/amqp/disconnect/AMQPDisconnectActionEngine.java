@@ -15,6 +15,7 @@ import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.Logger;
 import com.neotys.extensions.action.engine.SampleResult;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 
 public final class AMQPDisconnectActionEngine extends AMQPActionEngine {
 
@@ -36,18 +37,36 @@ public final class AMQPDisconnectActionEngine extends AMQPActionEngine {
 		if (logger.isDebugEnabled()) {
 			logger.debug(request);
 		}
-		final String channelName = parsedArgs.get(CHANNELNAME.getOption().getName()).get();
-		final Object cachedChannel = context.getCurrentVirtualUser().remove(channelName);
-		if (!(cachedChannel instanceof Channel)) {
-			return newErrorResult(context, request, STATUS_CODE_ERROR_DISCONNECTION, "Connection to channel " + channelName + " has not been created.");
-		}
-		
-		final Channel channel = (Channel) cachedChannel;
-		try {
-			channel.close();
-			return newOkResult(context, request, "Disconnected from channel " + channelName + ".");
-		} catch (final IOException | TimeoutException exception) {
-			return newErrorResult(context, request, STATUS_CODE_ERROR_DISCONNECTION, "Could not disconnect from channel: ", exception);
-		}
+		final Optional<String> channelName = parsedArgs.get(CHANNELNAME.getOption().getName());
+		if(channelName.isPresent()){
+			// Disconnect the channel
+			final Object cachedChannel = context.getCurrentVirtualUser().remove(channelName.get());
+			if (!(cachedChannel instanceof Channel)) {
+				return newErrorResult(context, request, STATUS_CODE_ERROR_DISCONNECTION, "Connection to channel " + channelName.get() + " do not exist.");
+			}			
+			final Channel channel = (Channel) cachedChannel;
+			try {
+				channel.close();
+				return newOkResult(context, request, "Disconnected from channel " + channelName.get() + ".");
+			} catch (final IOException | TimeoutException exception) {
+				return newErrorResult(context, request, STATUS_CODE_ERROR_DISCONNECTION, "Could not disconnect from channel: ", exception);
+			}
+		} 
+		// Disconnect all channels
+		final Object cachedAMQPConnection = context.getCurrentVirtualUser().remove(AMQP_CONNECTION_KEY);
+		 
+		if (cachedAMQPConnection instanceof Connection) {
+			try {
+				final Connection amqpConnection = (Connection) cachedAMQPConnection;
+				amqpConnection.close();
+				return newOkResult(context, request, "Disconnected all channels.");
+			} catch (final Exception e) {
+				return newErrorResult(context, request, STATUS_CODE_ERROR_DISCONNECTION, "Cannot disconnect all channels from AMQP server", e);
+			} 
+		} else if (cachedAMQPConnection == null) {
+			return newErrorResult(context, request, STATUS_CODE_ERROR_DISCONNECTION, "No connection for this channel.");
+		} else {
+			return newErrorResult(context, request, STATUS_CODE_ERROR_DISCONNECTION, "The AMQP Connection has not the correct type.");
+		}		
 	}
 }

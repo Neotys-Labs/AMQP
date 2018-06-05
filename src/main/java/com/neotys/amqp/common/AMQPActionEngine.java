@@ -7,6 +7,8 @@ import com.neotys.jms.JmsResultFactory;
 
 public abstract class AMQPActionEngine implements ActionEngine {
 
+	public static final String AMQP_CONNECTION_KEY = "AMQPConnectionKey";
+	
 	protected static SampleResult newErrorResult(final Context context, final String requestContent, final String statusCode,
 			final String statusMessage, final Exception e) {
 		final SampleResult result = JmsResultFactory.newErrorResult(context, statusCode, statusMessage, e);
