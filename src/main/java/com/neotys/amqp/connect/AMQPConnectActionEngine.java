@@ -6,6 +6,7 @@ import static com.neotys.amqp.connect.AMQPConnectParameter.CHANNELNAME;
 import static com.neotys.amqp.connect.AMQPConnectParameter.HOSTNAME;
 import static com.neotys.amqp.connect.AMQPConnectParameter.PASSWORD;
 import static com.neotys.amqp.connect.AMQPConnectParameter.PORT;
+import static com.neotys.amqp.connect.AMQPConnectParameter.SSLPROTOCOL;
 import static com.neotys.amqp.connect.AMQPConnectParameter.USERNAME;
 import static com.neotys.amqp.connect.AMQPConnectParameter.VIRTUALHOST;
 
@@ -61,7 +62,14 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 				if (parsedArgs.get(VIRTUALHOST.getOption().getName()).isPresent()) {
 					connectionFactory.setVirtualHost(parsedArgs.get(VIRTUALHOST.getOption().getName()).get());
 				}
-
+				final Optional<String> sslProtocol = parsedArgs.get(SSLPROTOCOL.getOption().getName());
+				if (sslProtocol.isPresent()) {
+					if(sslProtocol.get().isEmpty()){
+						connectionFactory.useSslProtocol();
+					} else {
+						connectionFactory.useSslProtocol(sslProtocol.get());	
+					}					
+				}
 				amqpConnection = connectionFactory.newConnection();
 
 			} else {

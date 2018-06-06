@@ -29,7 +29,9 @@ enum AMQPConnectParameter {
 	PORT("port", Required, True, TEXT, "5672", "AMQP server port", INTEGER_VALIDATOR),	
 	USERNAME("username", Optional, False, TEXT, "", "Username to connect to the AMQP server.", ALWAYS_VALID),
 	PASSWORD("password", Optional, False, TEXT, "", "Password to connect to the AMQP server.", ALWAYS_VALID),
-	VIRTUALHOST("virtualHost", Optional, False, TEXT, "/", "Virtual host", ALWAYS_VALID);
+	VIRTUALHOST("virtualHost", Optional, False, TEXT, "/", "Virtual host", ALWAYS_VALID),
+	SSLPROTOCOL("sslProtocol", Optional, False, TEXT, "", "SSL protocol to use, e.g. TLSv1, TLSv1.2 or keep value empty for default SSL protocol.", ALWAYS_VALID);
+	
 
 	private final AMQPParameterOption option;
 	
