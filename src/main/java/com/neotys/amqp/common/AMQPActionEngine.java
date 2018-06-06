@@ -1,9 +1,9 @@
 package com.neotys.amqp.common;
 
+import com.neotys.action.result.ResultFactory;
 import com.neotys.extensions.action.engine.ActionEngine;
 import com.neotys.extensions.action.engine.Context;
 import com.neotys.extensions.action.engine.SampleResult;
-import com.neotys.jms.JmsResultFactory;
 
 public abstract class AMQPActionEngine implements ActionEngine {
 
@@ -11,20 +11,20 @@ public abstract class AMQPActionEngine implements ActionEngine {
 	
 	protected static SampleResult newErrorResult(final Context context, final String requestContent, final String statusCode,
 			final String statusMessage, final Exception e) {
-		final SampleResult result = JmsResultFactory.newErrorResult(context, statusCode, statusMessage, e);
+		final SampleResult result = ResultFactory.newErrorResult(context, statusCode, statusMessage, e);
 		result.setRequestContent(requestContent);
 		return result;
 	}
 
 	protected static SampleResult newOkResult(final Context context, final String requestContent, final String statusMessage) {
-		final SampleResult result = JmsResultFactory.newOkResult(context, statusMessage);
+		final SampleResult result = ResultFactory.newOkResult(context, statusMessage);
 		result.setRequestContent(requestContent);
 		return result;
 	}
 
 	protected static SampleResult newErrorResult(final Context context, final String requestContent, final String statusCode,
 			final String statusMessage) {
-		final SampleResult result = JmsResultFactory.newErrorResult(context, statusCode, statusMessage);
+		final SampleResult result = ResultFactory.newErrorResult(context, statusCode, statusMessage);
 		result.setRequestContent(requestContent);
 		return result;
 	}
