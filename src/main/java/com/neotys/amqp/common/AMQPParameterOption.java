@@ -15,10 +15,7 @@ public class AMQPParameterOption implements Option {
 	private final ArgumentValidator argumentValidator;
 
 	/**
-	 * @param name
-	 * @param description
-	 * @param required
-	 * @param visible Whether or not the parameter is included in the description (whether the user can see it or not). 
+	 * @param appearsByDefault Whether or not the parameter is included in the description (whether the user can see it or not).
 	 */
 	public AMQPParameterOption(final String name, final OptionalRequired optionalRequired,
 			final AppearsByDefault appearsByDefault,

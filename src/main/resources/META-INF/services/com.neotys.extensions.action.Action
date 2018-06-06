@@ -1,2 +1,4 @@
 com.neotys.amqp.connect.AMQPConnectAction
 com.neotys.amqp.disconnect.AMQPDisconnectAction
+com.neotys.amqp.publish.AMQPPublishAction
+com.neotys.amqp.consume.AMQPConsumeAction
