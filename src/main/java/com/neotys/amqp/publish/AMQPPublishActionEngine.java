@@ -49,11 +49,20 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 
 		final String exchange = parsedArgs.get(AMQPPublishParameter.EXCHANGE.getOption().getName()).get();
 		final String routingKey = parsedArgs.get(AMQPPublishParameter.ROUTINGKEY.getOption().getName()).get();
-		final String contentType = parsedArgs.get(AMQPPublishParameter.CONTENTTYPE.getOption().getName()).or("");
-		final AMQP.BasicProperties properties = getProperties(contentType);
 
+		final String contentType = parsedArgs.get(AMQPPublishParameter.CONTENTTYPE.getOption().getName()).or("text/plain");
+		final boolean persistent = parsedArgs.get(AMQPPublishParameter.PERSISTENT.getOption().getName()).transform(Boolean::parseBoolean).or(false);
+		final int priority = parsedArgs.get(AMQPPublishParameter.PRIORITY.getOption().getName()).transform(Integer::parseInt).or(0);
+		final AMQP.BasicProperties properties = getProperties(contentType, persistent, priority);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("message properties: " + properties.toString());
+		}
 		try {
 			final String messageContent = getMessageContent(context, parsedArgs);
+			if (logger.isDebugEnabled()) {
+				logger.debug("message content: " + messageContent);
+			}
 			final byte[] messageBytes = messageContent.getBytes();
 			channel.basicPublish(exchange, routingKey, properties, messageBytes);
 			return newOkResult(context, request, "Message published on channel " + channelName + ".");
@@ -140,15 +149,17 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 		return charset.isPresent() ? new InputStreamReader(is, charset.get()) : new InputStreamReader(is);
 	}
 
-	private AMQP.BasicProperties getProperties(final String contentType) {
+	private AMQP.BasicProperties getProperties(final String contentType,
+											   final boolean persistent,
+											   final int priority) {
 		final AMQP.BasicProperties.Builder builder = new AMQP.BasicProperties.Builder();
 
-		// TODO handle more properties
-//		final int deliveryMode = getPersistent() ? 2 : 1;
+		final int deliveryMode = persistent ? 2 : 1;
 
-		builder.contentType(contentType);
-//				.deliveryMode(deliveryMode)
-//				.priority(0)
+		builder.contentType(contentType)
+				.deliveryMode(deliveryMode)
+				.priority(priority);
+		// TODO handle more properties?
 //				.correlationId(getCorrelationId())
 //				.replyTo(getReplyToQueue())
 //				.type(getMessageType())
