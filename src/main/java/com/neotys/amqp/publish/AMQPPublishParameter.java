@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import static com.neotys.action.argument.DefaultArgumentValidator.ALWAYS_VALID;
 import static com.neotys.action.argument.DefaultArgumentValidator.NON_EMPTY;
+import static com.neotys.action.argument.Option.AppearsByDefault.False;
 import static com.neotys.action.argument.Option.AppearsByDefault.True;
 import static com.neotys.action.argument.Option.OptionalRequired.Optional;
 import static com.neotys.action.argument.Option.OptionalRequired.Required;
@@ -27,7 +28,10 @@ enum AMQPPublishParameter {
 	EXCHANGE("exchange", Required, True, TEXT, "myExchange", "the AMQP exchange where the message will be published.", NON_EMPTY),
 	ROUTINGKEY("routingKey", Required, True, TEXT, "my.routing.key", "the AMQP routing key.", NON_EMPTY),
 	TEXTCONTENT("textContent", Optional, True, TEXT, "", "the message content.", ALWAYS_VALID),
-	CONTENTTYPE("contentType", Optional, True, TEXT, "text/plain", "the message content type.", ALWAYS_VALID);
+	CONTENTTYPE("contentType", Optional, True, TEXT, "text/plain", "the message content type.", ALWAYS_VALID),
+	FILEPATH("contentFile.path", Optional, True, TEXT, "", "The path of the content file. Use the variable \'${NL-CustomResources}\' to access on the Load Generator the synchronized resources located in the \'custom-resources\' folder of the project..", ALWAYS_VALID),
+	FILECHARSET("contentFile.charset", Optional, False, TEXT, "", "The charset of the file.", ALWAYS_VALID),
+	PARSEFILE("parseFile", Optional, False, TEXT, "", "Whether to parse the file to replace variables. Default value is false.", ALWAYS_VALID);
 
 	private final AMQPParameterOption option;
 	

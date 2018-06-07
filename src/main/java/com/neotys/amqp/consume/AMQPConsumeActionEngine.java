@@ -82,7 +82,7 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 		try {
 			final String message = messageFuture.get(10, TimeUnit.SECONDS);
 			return newOkResult(context, request, message);
-		} catch (InterruptedException | TimeoutException | ExecutionException exception) {
+		} catch (final InterruptedException | TimeoutException | ExecutionException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Could not consume on channel ", exception);
 		}
 	}
