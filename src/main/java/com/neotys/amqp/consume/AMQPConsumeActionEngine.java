@@ -21,11 +21,16 @@ import java.util.concurrent.TimeoutException;
 
 import static com.neotys.action.argument.Arguments.getArgumentLogString;
 import static com.neotys.action.argument.Arguments.parseArguments;
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.Long.parseLong;
 
 public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 
 	private static final String STATUS_CODE_INVALID_PARAMETER = "NL-AMQP-CONSUME-ACTION-01";
 	private static final String STATUS_CODE_ERROR_CONSUME = "NL-AMQP-CONSUME-ACTION-02";
+
+	static final long DEFAULT_TIMEOUT = 2000L;
+	static final boolean DEFAULT_FAIL_ON_TIMEOUT = true;
 
 	@Override
 	public SampleResult execute(final Context context, final List<ActionParameter> parameters) {
@@ -50,6 +55,8 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 
 		final String queueName = parsedArgs.get(AMQPConsumeParameter.QUEUENAME.getOption().getName()).get();
 
+		final long timeout = getTimeout(parsedArgs);
+
 		final SettableFuture<String> messageFuture = SettableFuture.create();
 
 		// TODO test code that declare the queue, the exchange and bind it to the queue.
@@ -62,6 +69,7 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 //		}
 
 		boolean autoAck = false;
+		final long startTime = System.currentTimeMillis();
 		try {
 			channel.basicConsume(queueName, autoAck, "myConsumerTag",
 					new DefaultConsumer(channel) {
@@ -76,14 +84,35 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 							channel.basicAck(envelope.getDeliveryTag(), false);
 						}
 					});
-		} catch (final IOException exception) {
+			final String message = timeout == 0 ? messageFuture.get() : messageFuture.get(timeout, TimeUnit.MILLISECONDS);
+			final long endTime = System.currentTimeMillis();
+			return newOkResult(context, request, message, endTime - startTime);
+		} catch (final InterruptedException | ExecutionException | IOException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Could not consume on channel ", exception);
+		} catch (final TimeoutException e) {
+			final String statusMessage = "Message not received before timeout of " + timeout + " ms.";
+			if (failOnTimeout(parsedArgs)) {
+				return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, statusMessage);
+			} else {
+				logger.debug(statusMessage);
+				return newOkResult(context, request, statusMessage);
+			}
 		}
-		try {
-			final String message = messageFuture.get(10, TimeUnit.SECONDS);
-			return newOkResult(context, request, message);
-		} catch (final InterruptedException | TimeoutException | ExecutionException exception) {
-			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Could not consume on channel ", exception);
-		}
+	}
+
+	/**
+	 * Get fail on timeout from arguments if its present, default value otherwise.
+	 */
+	private static boolean failOnTimeout(final Map<String, Optional<String>> parsedArgs) {
+		final Optional<String> argument = parsedArgs.get(AMQPConsumeParameter.FAILONTIMEOUT.getOption().getName());
+		return argument.isPresent() ? parseBoolean(argument.get()) : DEFAULT_FAIL_ON_TIMEOUT;
+	}
+
+	/**
+	 * Get timeout from arguments if its present, default value otherwise.
+	 */
+	private static long getTimeout(final Map<String, Optional<String>> parsedArgs) {
+		final Optional<String> argument = parsedArgs.get(AMQPConsumeParameter.TIMEOUT.getOption().getName());
+		return argument.isPresent() ? parseLong(argument.get()) : DEFAULT_TIMEOUT;
 	}
 }

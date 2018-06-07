@@ -9,8 +9,12 @@ import com.neotys.extensions.action.ActionParameter.Type;
 
 import java.util.Arrays;
 
+import static com.neotys.action.argument.DefaultArgumentValidator.BOOLEAN_VALIDATOR;
 import static com.neotys.action.argument.DefaultArgumentValidator.NON_EMPTY;
+import static com.neotys.action.argument.DefaultArgumentValidator.POSITIVE_LONG_VALIDATOR;
+import static com.neotys.action.argument.Option.AppearsByDefault.False;
 import static com.neotys.action.argument.Option.AppearsByDefault.True;
+import static com.neotys.action.argument.Option.OptionalRequired.Optional;
 import static com.neotys.action.argument.Option.OptionalRequired.Required;
 import static com.neotys.extensions.action.ActionParameter.Type.TEXT;
 
@@ -22,7 +26,9 @@ import static com.neotys.extensions.action.ActionParameter.Type.TEXT;
 enum AMQPConsumeParameter {
 
 	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "the name of the AMQP channel.", NON_EMPTY),
-	QUEUENAME("queueName", Required, True, TEXT, "myQueueName", "the AMQP queue where the message will be consumed.", NON_EMPTY);
+	QUEUENAME("queueName", Required, True, TEXT, "myQueueName", "the AMQP queue where the message will be consumed.", NON_EMPTY),
+	TIMEOUT("timeout", Optional, True, TEXT, "2000", "Timeout (in ms) applied to wait a message. 0=none.", POSITIVE_LONG_VALIDATOR),
+	FAILONTIMEOUT("failOnTimeout", Optional, False, TEXT, "true", "If set to true, the action fails when timeout is reached.", BOOLEAN_VALIDATOR);
 
 	private final AMQPParameterOption option;
 	

@@ -22,6 +22,12 @@ public abstract class AMQPActionEngine implements ActionEngine {
 		return result;
 	}
 
+	protected static SampleResult newOkResult(final Context context, final String requestContent, final String statusMessage, final long duration) {
+		final SampleResult result = AMQPActionEngine.newOkResult(context, requestContent, statusMessage);
+		result.setDuration(duration);
+		return result;
+	}
+
 	protected static SampleResult newErrorResult(final Context context, final String requestContent, final String statusCode,
 			final String statusMessage) {
 		final SampleResult result = ResultFactory.newErrorResult(context, statusCode, statusMessage);
