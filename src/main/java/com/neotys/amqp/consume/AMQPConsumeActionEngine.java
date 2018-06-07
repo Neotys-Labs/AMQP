@@ -3,6 +3,7 @@ package com.neotys.amqp.consume;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.SettableFuture;
 import com.neotys.amqp.common.AMQPActionEngine;
+import com.neotys.amqp.common.AMQPMessage;
 import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.Context;
 import com.neotys.extensions.action.engine.Logger;
@@ -54,10 +55,8 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 		final Channel channel = (Channel) cachedChannel;
 
 		final String queueName = parsedArgs.get(AMQPConsumeParameter.QUEUENAME.getOption().getName()).get();
-
 		final long timeout = getTimeout(parsedArgs);
-
-		final SettableFuture<String> messageFuture = SettableFuture.create();
+		final boolean autoAck = parsedArgs.get(AMQPConsumeParameter.AUTOACK.getOption().getName()).transform(Boolean::parseBoolean).or(false);
 
 		// TODO test code that declare the queue, the exchange and bind it to the queue.
 //		try {
@@ -68,25 +67,8 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 //			e.printStackTrace();
 //		}
 
-		boolean autoAck = false;
-		final long startTime = System.currentTimeMillis();
 		try {
-			channel.basicConsume(queueName, autoAck, "myConsumerTag",
-					new DefaultConsumer(channel) {
-						@Override
-						public void handleDelivery(String consumerTag,
-												   Envelope envelope,
-												   AMQP.BasicProperties properties,
-												   byte[] body)
-								throws IOException {
-							messageFuture.set(new String(body));
-
-							channel.basicAck(envelope.getDeliveryTag(), false);
-						}
-					});
-			final String message = timeout == 0 ? messageFuture.get() : messageFuture.get(timeout, TimeUnit.MILLISECONDS);
-			final long endTime = System.currentTimeMillis();
-			return newOkResult(context, request, message, endTime - startTime);
+			return doConsume(context, request, channel, queueName, timeout, autoAck);
 		} catch (final InterruptedException | ExecutionException | IOException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Could not consume on channel ", exception);
 		} catch (final TimeoutException e) {
@@ -98,6 +80,36 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 				return newOkResult(context, request, statusMessage);
 			}
 		}
+	}
+
+	private SampleResult doConsume(final Context context,
+								   final String request,
+								   final Channel channel,
+								   final String queueName,
+								   final long timeout,
+								   final boolean autoAck) throws IOException, InterruptedException, ExecutionException, TimeoutException {
+		final SettableFuture<AMQPMessage> messageFuture = SettableFuture.create();
+		final long startTime = System.currentTimeMillis();
+		channel.basicConsume(queueName, autoAck, "",
+				new DefaultConsumer(channel) {
+					@Override
+					public void handleDelivery(final String consumerTag,
+											   final Envelope envelope,
+											   final AMQP.BasicProperties properties,
+											   final byte[] body) throws IOException {
+						messageFuture.set(new AMQPMessage(consumerTag, envelope, properties, new String(body)));
+
+						if (!autoAck) {
+							channel.basicAck(envelope.getDeliveryTag(), false);
+						}
+					}
+				});
+		final AMQPMessage message = timeout == 0 ? messageFuture.get() : messageFuture.get(timeout, TimeUnit.MILLISECONDS);
+		final long endTime = System.currentTimeMillis();
+		if (context.getLogger().isDebugEnabled()) {
+			context.getLogger().debug("Message received: " + message.toString());
+		}
+		return newOkResult(context, request, message.getBody(), endTime - startTime);
 	}
 
 	/**
