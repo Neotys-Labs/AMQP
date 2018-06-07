@@ -7,7 +7,7 @@ import com.neotys.extensions.action.engine.SampleResult;
 
 public abstract class AMQPActionEngine implements ActionEngine {
 
-	public static final String AMQP_CONNECTION_KEY = "AMQPConnectionKey";
+	protected static final String AMQP_CONNECTION_KEY = "AMQPConnectionKey";
 	
 	protected static SampleResult newErrorResult(final Context context, final String requestContent, final String statusCode,
 			final String statusMessage, final Exception e) {

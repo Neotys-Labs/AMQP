@@ -1,7 +1,12 @@
 package com.neotys.amqp.publish;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
 import com.neotys.amqp.common.AMQPActionEngine;
 import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.Context;
@@ -11,8 +16,12 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.neotys.action.argument.Arguments.getArgumentLogString;
@@ -24,6 +33,17 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 	private static final String STATUS_CODE_ERROR_PUBLISH = "NL-AMQP-PUBLISH-ACTION-02";
 
 	static final boolean DEFAULT_FILE_PARSE = false;
+
+	private static final LoadingCache<String, Class<?>> TYPES_CACHE;
+
+	static {
+		TYPES_CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build(new CacheLoader<String, Class<?>>() {
+			@Override
+			public Class<?> load(final String key) throws ClassNotFoundException {
+				return Class.forName(key);
+			}
+		});
+	}
 	
 	@Override
 	public SampleResult execute(final Context context, final List<ActionParameter> parameters) {
@@ -50,18 +70,15 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 		final String exchange = parsedArgs.get(AMQPPublishParameter.EXCHANGE.getOption().getName()).get();
 		final String routingKey = parsedArgs.get(AMQPPublishParameter.ROUTINGKEY.getOption().getName()).get();
 
-		final String contentType = parsedArgs.get(AMQPPublishParameter.CONTENTTYPE.getOption().getName()).or("text/plain");
-		final boolean persistent = parsedArgs.get(AMQPPublishParameter.PERSISTENT.getOption().getName()).transform(Boolean::parseBoolean).or(false);
-		final int priority = parsedArgs.get(AMQPPublishParameter.PRIORITY.getOption().getName()).transform(Integer::parseInt).or(0);
-		final AMQP.BasicProperties properties = getProperties(contentType, persistent, priority);
+		final AMQP.BasicProperties properties = getProperties(logger, parsedArgs);
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("message properties: " + properties.toString());
+			logger.debug("Message properties: " + properties.toString());
 		}
 		try {
 			final String messageContent = getMessageContent(context, parsedArgs);
 			if (logger.isDebugEnabled()) {
-				logger.debug("message content: " + messageContent);
+				logger.debug("Message content: " + messageContent);
 			}
 			final byte[] messageBytes = messageContent.getBytes();
 			channel.basicPublish(exchange, routingKey, properties, messageBytes);
@@ -94,7 +111,6 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 				throw new IllegalArgumentException("Invalid path in " + filePathParameterName + " : " + filePath.get() + ".");
 			}
 		}
-
 	}
 
 	/**
@@ -149,25 +165,122 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 		return charset.isPresent() ? new InputStreamReader(is, charset.get()) : new InputStreamReader(is);
 	}
 
-	private AMQP.BasicProperties getProperties(final String contentType,
-											   final boolean persistent,
-											   final int priority) {
+	private AMQP.BasicProperties getProperties(final Logger logger, final Map<String, Optional<String>> parsedArgs) {
 		final AMQP.BasicProperties.Builder builder = new AMQP.BasicProperties.Builder();
+
+		final String contentType = parsedArgs.get(AMQPPublishParameter.CONTENTTYPE.getOption().getName()).orNull();
+		final String contentEncoding = parsedArgs.get(AMQPPublishParameter.CONTENTENCODING.getOption().getName()).orNull();
+		final Map<String, Object> headers = getHeaders(logger, parsedArgs);
+		final int priority = parsedArgs.get(AMQPPublishParameter.PRIORITY.getOption().getName()).transform(Integer::parseInt).or(0);
+		final boolean persistent = parsedArgs.get(AMQPPublishParameter.PERSISTENT.getOption().getName()).transform(Boolean::parseBoolean).or(false);
+		final String correlationId = parsedArgs.get(AMQPPublishParameter.CORRELATIONID.getOption().getName()).orNull();
+		final String replyTo = parsedArgs.get(AMQPPublishParameter.REPLYTO.getOption().getName()).orNull();
+		final String expiration = parsedArgs.get(AMQPPublishParameter.EXPIRATION.getOption().getName()).orNull();
+		final String messageId = parsedArgs.get(AMQPPublishParameter.MESSAGEID.getOption().getName()).orNull();
+		final Date timestamp = parsedArgs.get(AMQPPublishParameter.TIMESTAMP.getOption().getName()).transform(Long::parseLong).transform(Date::new).orNull();
+		final String type = parsedArgs.get(AMQPPublishParameter.TYPE.getOption().getName()).orNull();
+		final String userId = parsedArgs.get(AMQPPublishParameter.USERID.getOption().getName()).orNull();
+		final String appId = parsedArgs.get(AMQPPublishParameter.APPID.getOption().getName()).orNull();
+		final String clusterId = parsedArgs.get(AMQPPublishParameter.CLUSTERID.getOption().getName()).orNull();
 
 		final int deliveryMode = persistent ? 2 : 1;
 
 		builder.contentType(contentType)
+				.contentEncoding(contentEncoding)
 				.deliveryMode(deliveryMode)
-				.priority(priority);
-		// TODO handle more properties?
-//				.correlationId(getCorrelationId())
-//				.replyTo(getReplyToQueue())
-//				.type(getMessageType())
-//				.headers(prepareHeaders())
-//				.build();
-//		if (getMessageId() != null && !getMessageId().isEmpty()) {
-//			builder.messageId(getMessageId());
-//		}
+				.headers(headers)
+				.priority(priority)
+				.correlationId(correlationId)
+				.replyTo(replyTo)
+				.expiration(expiration)
+				.messageId(messageId)
+				.timestamp(timestamp)
+				.type(type)
+				.appId(appId)
+				.userId(userId)
+				.clusterId(clusterId);
+
 		return builder.build();
 	}
+
+	/**
+	 * Get message headers. Headers are separated by line separator.
+	 */
+	private static Map<String, Object> getHeaders(final Logger logger, final Map<String, Optional<String>> parsedArgs) {
+		final Optional<String> param = parsedArgs.get(AMQPPublishParameter.HEADERS.getOption().getName());
+		if (!param.isPresent() || isNullOrEmpty(param.get())) {
+			return Collections.emptyMap();
+		}
+		final String[] headers = param.get().split("\n");
+		final ImmutableMap.Builder<String, Object> mapBuilder = ImmutableMap.builder();
+		for (final String header : headers) {
+			if (isNullOrEmpty(header)) {
+				continue;
+			}
+			addHeader(logger, mapBuilder, header);
+		}
+		return mapBuilder.build();
+	}
+
+	/**
+	 * Add one header. Pattern name=[class]value.
+	 */
+	private static void addHeader(final Logger logger, final ImmutableMap.Builder<String, Object> builder, final String property) {
+		final int equalIndex = property.indexOf('=');
+		if (equalIndex == -1 && equalIndex != property.length() - 1) {
+			logger.debug("Invalid header: " + property);
+			return;
+		}
+
+		final String name = property.substring(0, equalIndex);
+		final String typeAndValue = property.substring(equalIndex + 1);
+
+		final int openBracketIndex = typeAndValue.indexOf('[');
+		final int closeBracketIndex = typeAndValue.indexOf(']');
+		Object value;
+		if (openBracketIndex != -1 && closeBracketIndex != -1 && closeBracketIndex != typeAndValue.length() - 1) {
+			// we have a type
+			String typeString = null;
+			try {
+				typeString = typeAndValue.substring(openBracketIndex + 1, closeBracketIndex);
+				final Class<?> type = TYPES_CACHE.get(typeString);
+				value = getValueFromType(type, typeAndValue.substring(closeBracketIndex + 1));
+			} catch (final ExecutionException e) {
+				logger.debug("Invalid value type: " + typeString + " in property: " + property);
+				// default type : String
+				value = typeAndValue.substring(closeBracketIndex + 1);
+			}
+		} else {
+			// default type : String
+			value = typeAndValue;
+		}
+
+		builder.put(name, value);
+	}
+
+	/**
+	 *
+	 * @return return an object value, of type from argument, by its String representation.
+	 */
+	@VisibleForTesting
+	// FIXME to put in common with JMS.
+	static Object getValueFromType(final Class<?> type, final String valueString) {
+		if (Integer.class.isAssignableFrom(type)) {
+			return Integer.valueOf(valueString);
+		} else if (Boolean.class.isAssignableFrom(type)) {
+			return Boolean.valueOf(valueString);
+		} else if (Long.class.isAssignableFrom(type)) {
+			return Long.valueOf(valueString);
+		} else if (Double.class.isAssignableFrom(type)) {
+			return Double.valueOf(valueString);
+		} else if (Short.class.isAssignableFrom(type)) {
+			return Short.valueOf(valueString);
+		} else if (Byte.class.isAssignableFrom(type)) {
+			return Byte.valueOf(valueString);
+		} else if (Float.class.isAssignableFrom(type)) {
+			return Float.valueOf(valueString);
+		}
+		return valueString;
+	}
+
 }
