@@ -59,7 +59,10 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 
 		try {
 			return doConsume(context, request, channel, queueName, timeout, autoAck);
-		} catch (final InterruptedException | ExecutionException | IOException exception) {
+		} catch (final InterruptedException exception){
+			Thread.currentThread().interrupt();
+			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Could not consume: ", exception);
+		} catch (final ExecutionException | IOException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Could not consume: ", exception);
 		} catch (final TimeoutException e) {
 			final String statusMessage = "Message not received before timeout of " + timeout + " ms.";
