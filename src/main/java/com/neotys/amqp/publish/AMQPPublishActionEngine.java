@@ -1,30 +1,7 @@
 package com.neotys.amqp.publish;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.neotys.action.argument.Arguments.getArgumentLogString;
-import static com.neotys.action.argument.Arguments.parseArguments;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
 import com.neotys.amqp.common.AMQPActionEngine;
 import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.Context;
@@ -33,6 +10,15 @@ import com.neotys.extensions.action.engine.SampleResult;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 
+import java.io.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.neotys.action.argument.Arguments.getArgumentLogString;
+import static com.neotys.action.argument.Arguments.parseArguments;
+
 public final class AMQPPublishActionEngine extends AMQPActionEngine {
 
 	private static final String STATUS_CODE_INVALID_PARAMETER = "NL-AMQP-PUBLISH-ACTION-01";
@@ -40,17 +26,6 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 
 	static final boolean DEFAULT_FILE_PARSE = false;
 
-	private static final LoadingCache<String, Class<?>> TYPES_CACHE;
-
-	static {
-		TYPES_CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build(new CacheLoader<String, Class<?>>() {
-			@Override
-			public Class<?> load(final String key) throws ClassNotFoundException {
-				return Class.forName(key);
-			}
-		});
-	}
-	
 	@Override
 	public SampleResult execute(final Context context, final List<ActionParameter> parameters) {
 		final Map<String, Optional<String>> parsedArgs;
@@ -60,18 +35,17 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 		} catch (final IllegalArgumentException iae) {
 			return newErrorResult(context, "Executing AMQP Publish action.", STATUS_CODE_INVALID_PARAMETER, "Could not parse arguments: ", iae);
 		}
-		final String request = "Executing AMQP Publish action with parameters: " + getArgumentLogString(parsedArgs, AMQPPublishParameter.getOptions())+ ".";
+		final String request = "Executing AMQP Publish action with parameters: " + getArgumentLogString(parsedArgs, AMQPPublishParameter.getOptions()) + ".";
 		final Logger logger = context.getLogger();
 		if (logger.isDebugEnabled()) {
 			logger.debug(request);
 		}
 
 		final String channelName = parsedArgs.get(AMQPPublishParameter.CHANNELNAME.getOption().getName()).get();
-		final Object cachedChannel = context.getCurrentVirtualUser().get(channelName);
-		if (!(cachedChannel instanceof Channel)) {
+		final Channel channel = AMQPActionEngine.getChannel(context, channelName);
+		if (channel == null) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_PUBLISH, "Connection to channel " + channelName + " do not exist.");
 		}
-		final Channel channel = (Channel) cachedChannel;
 
 		final String exchange = parsedArgs.get(AMQPPublishParameter.EXCHANGE.getOption().getName()).get();
 		final String routingKey = parsedArgs.get(AMQPPublishParameter.ROUTINGKEY.getOption().getName()).get();
@@ -120,7 +94,6 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 	}
 
 	/**
-	 *
 	 * @return true if value is absent or null or empty.
 	 */
 	// FIXME to put in common with JMS.
@@ -133,7 +106,7 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 		final Optional<String> textContent = parsedArgs.get(AMQPPublishParameter.TEXTCONTENT.getOption().getName());
 		if (textContent.isPresent() && !Strings.isNullOrEmpty(textContent.get())) {
 			return textContent.get();
-		}else {
+		} else {
 			final String filePath = parsedArgs.get(AMQPPublishParameter.FILEPATH.getOption().getName()).get();
 			final String content = readFile(filePath, parsedArgs.get(AMQPPublishParameter.FILECHARSET.getOption().getName()));
 			final boolean parseFile = parsedArgs.get(AMQPPublishParameter.PARSEFILE.getOption().getName())
@@ -176,7 +149,7 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 
 		final String contentType = parsedArgs.get(AMQPPublishParameter.CONTENTTYPE.getOption().getName()).orNull();
 		final String contentEncoding = parsedArgs.get(AMQPPublishParameter.CONTENTENCODING.getOption().getName()).orNull();
-		final Map<String, Object> headers = getHeaders(logger, parsedArgs);
+		final Map<String, Object> headers = getProperties(logger, parsedArgs, AMQPPublishParameter.HEADERS.getOption(), "header");
 		final int priority = parsedArgs.get(AMQPPublishParameter.PRIORITY.getOption().getName()).transform(Integer::parseInt).or(0);
 		final boolean persistent = parsedArgs.get(AMQPPublishParameter.PERSISTENT.getOption().getName()).transform(Boolean::parseBoolean).or(false);
 		final String correlationId = parsedArgs.get(AMQPPublishParameter.CORRELATIONID.getOption().getName()).orNull();
@@ -207,86 +180,6 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 				.clusterId(clusterId);
 
 		return builder.build();
-	}
-
-	/**
-	 * Get message headers. Headers are separated by line separator.
-	 */
-	private static Map<String, Object> getHeaders(final Logger logger, final Map<String, Optional<String>> parsedArgs) {
-		final Optional<String> param = parsedArgs.get(AMQPPublishParameter.HEADERS.getOption().getName());
-		if (!param.isPresent() || isNullOrEmpty(param.get())) {
-			return Collections.emptyMap();
-		}
-		final String[] headers = param.get().split("\n");
-		final ImmutableMap.Builder<String, Object> mapBuilder = ImmutableMap.builder();
-		for (final String header : headers) {
-			if (isNullOrEmpty(header)) {
-				continue;
-			}
-			addHeader(logger, mapBuilder, header);
-		}
-		return mapBuilder.build();
-	}
-
-	/**
-	 * Add one header. Pattern name=[class]value.
-	 */
-	private static void addHeader(final Logger logger, final ImmutableMap.Builder<String, Object> builder, final String property) {
-		final int equalIndex = property.indexOf('=');
-		if (equalIndex == -1 && equalIndex != property.length() - 1) {
-			logger.debug("Invalid header: " + property);
-			return;
-		}
-
-		final String name = property.substring(0, equalIndex);
-		final String typeAndValue = property.substring(equalIndex + 1);
-
-		final int openBracketIndex = typeAndValue.indexOf('[');
-		final int closeBracketIndex = typeAndValue.indexOf(']');
-		Object value;
-		if (openBracketIndex != -1 && closeBracketIndex != -1 && closeBracketIndex != typeAndValue.length() - 1) {
-			// we have a type
-			String typeString = null;
-			try {
-				typeString = typeAndValue.substring(openBracketIndex + 1, closeBracketIndex);
-				final Class<?> type = TYPES_CACHE.get(typeString);
-				value = getValueFromType(type, typeAndValue.substring(closeBracketIndex + 1));
-			} catch (final ExecutionException e) {
-				logger.debug("Invalid value type: " + typeString + " in property: " + property);
-				// default type : String
-				value = typeAndValue.substring(closeBracketIndex + 1);
-			}
-		} else {
-			// default type : String
-			value = typeAndValue;
-		}
-
-		builder.put(name, value);
-	}
-
-	/**
-	 *
-	 * @return return an object value, of type from argument, by its String representation.
-	 */
-	@VisibleForTesting
-	// FIXME to put in common with JMS.
-	static Object getValueFromType(final Class<?> type, final String valueString) {
-		if (Integer.class.isAssignableFrom(type)) {
-			return Integer.valueOf(valueString);
-		} else if (Boolean.class.isAssignableFrom(type)) {
-			return Boolean.valueOf(valueString);
-		} else if (Long.class.isAssignableFrom(type)) {
-			return Long.valueOf(valueString);
-		} else if (Double.class.isAssignableFrom(type)) {
-			return Double.valueOf(valueString);
-		} else if (Short.class.isAssignableFrom(type)) {
-			return Short.valueOf(valueString);
-		} else if (Byte.class.isAssignableFrom(type)) {
-			return Byte.valueOf(valueString);
-		} else if (Float.class.isAssignableFrom(type)) {
-			return Float.valueOf(valueString);
-		}
-		return valueString;
 	}
 
 }

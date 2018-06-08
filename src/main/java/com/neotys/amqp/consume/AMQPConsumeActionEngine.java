@@ -11,7 +11,6 @@ import com.neotys.extensions.action.engine.SampleResult;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -46,13 +45,12 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 		}
 
 		final String channelName = parsedArgs.get(AMQPConsumeParameter.CHANNELNAME.getOption().getName()).get();
-		final Object cachedChannel = context.getCurrentVirtualUser().get(channelName);
-		if (!(cachedChannel instanceof Channel)) {
+		final Channel channel = AMQPActionEngine.getChannel(context, channelName);
+		if (channel == null) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Connection to channel " + channelName + " do not exist.");
 		}
-		final Channel channel = (Channel) cachedChannel;
 
-		final boolean declareExchange = parsedArgs.get(AMQPConsumeParameter.DECLAREEXCHANGE.getOption().getName()).transform(Boolean::parseBoolean).or(false);
+		final boolean declareExchange = getBooleanValue(parsedArgs, AMQPConsumeParameter.DECLAREEXCHANGE, false);
 		if (declareExchange) {
 			try {
 				declareExchange(context, channel, parsedArgs);
@@ -61,7 +59,7 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 			}
 		}
 
-		final boolean declareQueue = parsedArgs.get(AMQPConsumeParameter.DECLAREQUEUE.getOption().getName()).transform(Boolean::parseBoolean).or(false);
+		final boolean declareQueue = getBooleanValue(parsedArgs, AMQPConsumeParameter.DECLAREQUEUE, false);
 		final String queueName;
 		if (declareQueue) {
 			try {
@@ -74,7 +72,7 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 		}
 
 		final long timeout = getTimeout(parsedArgs);
-		final boolean autoAck = parsedArgs.get(AMQPConsumeParameter.AUTOACK.getOption().getName()).transform(Boolean::parseBoolean).or(false);
+		final boolean autoAck = getBooleanValue(parsedArgs, AMQPConsumeParameter.AUTOACK, false);
 
 		try {
 			return doConsume(context, request, channel, queueName, timeout, autoAck);
@@ -98,7 +96,11 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 		final String queueName;
 		if (queueNameOptional.isPresent()) {
 			context.getLogger().debug("Declaring queue: " + queueNameOptional.get());
-			queueName = channel.queueDeclare(queueNameOptional.get(), false, false, false, Collections.emptyMap()).getQueue();
+			final boolean durable = getBooleanValue(parsedArgs, AMQPConsumeParameter.QUEUEDURABLE, false);
+			final boolean exclusive = getBooleanValue(parsedArgs, AMQPConsumeParameter.QUEUEEXCLUSIVE, false);
+			final boolean autoDelete = getBooleanValue(parsedArgs, AMQPConsumeParameter.QUEUEAUTODELETE, false);
+			final Map<String, Object> arguments = getProperties(context.getLogger(), parsedArgs, AMQPConsumeParameter.QUEUEARGUMENTS.getOption(), "argument");
+			queueName = channel.queueDeclare(queueNameOptional.get(), durable, exclusive, autoDelete, arguments).getQueue();
 		} else {
 			context.getLogger().debug("Declaring queue");
 			queueName = channel.queueDeclare().getQueue();
@@ -110,8 +112,16 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 
 	private void declareExchange(final Context context, final Channel channel, final Map<String, Optional<String>> parsedArgs) throws IOException {
 		final Optional<String> exchangeNameOptional = parsedArgs.get(AMQPConsumeParameter.EXCHANGE.getOption().getName());
+		final String exchangeType = parsedArgs.get(AMQPConsumeParameter.EXCHANGETYPE.getOption().getName()).or("direct");
+		final boolean durable = getBooleanValue(parsedArgs, AMQPConsumeParameter.EXCHANGEDURABLE, false);
+		final boolean autoDelete = getBooleanValue(parsedArgs, AMQPConsumeParameter.EXCHANGEAUTODELETE, false);
+		final Map<String, Object> arguments = getProperties(context.getLogger(), parsedArgs, AMQPConsumeParameter.EXCHANGEARGUMENTS.getOption(), "argument");
 		context.getLogger().debug("Declaring exchange: " + exchangeNameOptional.get());
-		channel.exchangeDeclare(exchangeNameOptional.get(), BuiltinExchangeType.DIRECT, false, false, Collections.emptyMap());
+		channel.exchangeDeclare(exchangeNameOptional.get(), exchangeType, durable, autoDelete, arguments);
+	}
+
+	private boolean getBooleanValue(final Map<String, Optional<String>> parsedArgs, final AMQPConsumeParameter parameter, final boolean defaultValue) {
+		return parsedArgs.get(parameter.getOption().getName()).transform(Boolean::parseBoolean).or(defaultValue);
 	}
 
 	private SampleResult doConsume(final Context context,
