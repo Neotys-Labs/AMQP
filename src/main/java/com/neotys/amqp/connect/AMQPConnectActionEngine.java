@@ -92,10 +92,12 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 									return new X509Certificate[0];
 								}
 								@Override
+								@SuppressWarnings("squid:S4424")
 								public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 									// Trust all client certificates
 								}
 								@Override
+								@SuppressWarnings("squid:S4424")
 								public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 									// Trust all server certificates
 								}
