@@ -23,11 +23,11 @@ import static com.neotys.extensions.action.ActionParameter.Type.TEXT;
  */
 enum AMQPDeclareQueueParameter {
 
-	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "The name of the AMQP channel.", NON_EMPTY),
+	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "Name of the AMQP channel.", NON_EMPTY),
 
-	QUEUENAME("queueName", Optional, True, TEXT, "myAMQPQueue", "The AMQP queue name to declare. If not provided, a queue with a generated name will be created.", ALWAYS_VALID),
-	EXCHANGENAME("exchangeName", Required, True, TEXT, "myAMQPExchange", "The AMQP exchange where the queue will be bind.", NON_EMPTY),
-	ROUTINGKEY("routingKey", Required, True, TEXT, "my.routing.key", "The AMQP routing key where the queue will be bind.", NON_EMPTY),
+	QUEUENAME("queueName", Optional, True, TEXT, "myAMQPQueue", "Name of the AMQP queue to declare. If not provided, a queue with a generated name will be created.", ALWAYS_VALID),
+	EXCHANGENAME("exchangeName", Required, True, TEXT, "myAMQPExchange", "Name of the AMQP exchange where the queue will be bind.", NON_EMPTY),
+	ROUTINGKEY("routingKey", Required, True, TEXT, "my.routing.key", "AMQP routing key where the queue will be bind.", NON_EMPTY),
 
 	DURABLE("durable", Optional, False, TEXT, "", "If set to true, the created queue will be durable. Default value is false.", BOOLEAN_VALIDATOR),
 	EXCLUSIVE("exclusive", Optional, False, TEXT, "", "If set to true, the created queue will be exclusive. Default value is false.", BOOLEAN_VALIDATOR),

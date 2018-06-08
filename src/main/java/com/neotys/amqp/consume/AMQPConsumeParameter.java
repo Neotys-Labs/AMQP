@@ -22,8 +22,8 @@ import static com.neotys.extensions.action.ActionParameter.Type.TEXT;
  */
 enum AMQPConsumeParameter {
 
-	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "the name of the AMQP channel.", NON_EMPTY),
-	QUEUENAME("queueName", Required, True, TEXT, "myQueueName", "the AMQP queue where the message will be consumed.", NON_EMPTY),
+	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "Name of the AMQP channel.", NON_EMPTY),
+	QUEUENAME("queueName", Required, True, TEXT, "myAMQPQueue", "Name of AMQP queue where the message will be consumed.", NON_EMPTY),
 
 	TIMEOUT("timeout", Optional, True, TEXT, "2000", "Timeout (in ms) applied to wait a message. 0=none.", POSITIVE_LONG_VALIDATOR),
 	FAILONTIMEOUT("failOnTimeout", Optional, False, TEXT, "true", "If set to true, the action fails when timeout is reached.", BOOLEAN_VALIDATOR),
