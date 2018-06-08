@@ -10,9 +10,17 @@ import static com.neotys.amqp.connect.AMQPConnectParameter.SSLPROTOCOL;
 import static com.neotys.amqp.connect.AMQPConnectParameter.USERNAME;
 import static com.neotys.amqp.connect.AMQPConnectParameter.VIRTUALHOST;
 
+import java.io.File;
+import java.io.InputStream;
+import java.security.KeyStore;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import com.neotys.amqp.common.AMQPActionEngine;
 import com.neotys.extensions.action.ActionParameter;
@@ -24,6 +32,8 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 
 	private static final String STATUS_CODE_INVALID_PARAMETER = "NL-AMQP-CONNECT-ACTION-01";
 	private static final String STATUS_CODE_ERROR_CONNECTION = "NL-AMQP-CONNECT-ACTION-02";
+	private static final String NEOLOAD_KEYSTORE_FORMAT = "PKCS12";
+	private static final String NEOLOAD_CERTIFICATE_ALGORITHM = "SunX509";
 
 	@Override
 	public SampleResult execute(final com.neotys.extensions.action.engine.Context context, final List<ActionParameter> parameters) {
@@ -44,7 +54,7 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 		if (AMQPActionEngine.getConnection(context, connectionName) != null) {
 			return newErrorResult(context, request, STATUS_CODE_INVALID_PARAMETER,
 					"A AMQP connection already exists with name " + connectionName + ".");
-		}					
+		}
 		try {
 			final ConnectionFactory connectionFactory = new ConnectionFactory();
 			connectionFactory.setHost(getArgument(parsedArgs, HOSTNAME).get());
@@ -53,19 +63,50 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 			getArgument(parsedArgs, PASSWORD).ifPresent(p -> connectionFactory.setPassword(p));
 			getArgument(parsedArgs, VIRTUALHOST).ifPresent(v -> connectionFactory.setVirtualHost(v));
 			final Optional<String> sslProtocol = getArgument(parsedArgs, SSLPROTOCOL);
-			if(sslProtocol.isPresent() && "".equals(sslProtocol.get())){
-				connectionFactory.useSslProtocol();
-			} else if(sslProtocol.isPresent()){
-				connectionFactory.useSslProtocol(sslProtocol.get());
-			}			
+			if (sslProtocol.isPresent()) {
+				final String sslProtocolValue = sslProtocol.get();
+				final String certificateName = context.getCertificateManager().getCertificateName();
+				if (certificateName == null) {
+					// No certificate specified in NeoLoad. Use default SSL.
+					if ("".equals(sslProtocolValue)) {
+						connectionFactory.useSslProtocol();
+					} else {
+						connectionFactory.useSslProtocol(sslProtocolValue);
+					}
+				} else {
+					// Use certificate as specified in NeoLoad Certificates Manager*
+					final char[] certificatePassword = context.getCertificateManager().getCertificatePassword().toCharArray();
+					final String certificateFolder = context.getCertificateManager().getCertificateFolder();
+					final String certificatePath = certificateFolder + File.separator + certificateName;
+					final KeyStore keystore = KeyStore.getInstance(NEOLOAD_KEYSTORE_FORMAT);
+					final InputStream certificateInputStream = context.getFileManager().getFileInputStream(certificatePath);
+					keystore.load(certificateInputStream, certificatePassword);
+					final KeyManagerFactory kmf = KeyManagerFactory.getInstance(NEOLOAD_CERTIFICATE_ALGORITHM);
+					kmf.init(keystore, certificatePassword);
+					final SSLContext sslContext = SSLContext.getInstance(sslProtocolValue);
+					final TrustManager[] trustAllCerts = new TrustManager[] {
+							new X509TrustManager() {
+								@Override
+								public java.security.cert.X509Certificate[] getAcceptedIssuers() {return null;}
+								@Override
+								public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+								@Override
+								public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+							}
+					};
+					sslContext.init(kmf.getKeyManagers(), trustAllCerts, new java.security.SecureRandom());
+					connectionFactory.useSslProtocol(sslContext);
+				}
+			}
 			AMQPActionEngine.setConnection(context, connectionName, connectionFactory.newConnection());
 		} catch (final Exception e) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONNECTION, "Cannot create connection to AMQP server.", e);
 		}
 		return newOkResult(context, request, "Connected to AMQP server.");
 	}
-	
-	private static final Optional<String> getArgument(Map<String, com.google.common.base.Optional<String>> parsedArgs, final AMQPConnectParameter parameter){
-		return Optional.ofNullable(parsedArgs.get(parameter.getOption().getName()).orNull());				
+
+	private static final Optional<String> getArgument(Map<String, com.google.common.base.Optional<String>> parsedArgs,
+			final AMQPConnectParameter parameter) {
+		return Optional.ofNullable(parsedArgs.get(parameter.getOption().getName()).orNull());
 	}
 }
