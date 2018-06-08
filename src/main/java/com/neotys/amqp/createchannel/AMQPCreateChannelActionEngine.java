@@ -7,7 +7,6 @@ import static com.neotys.amqp.createchannel.AMQPCreateChannelParameter.CONNECTIO
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.neotys.amqp.common.AMQPActionEngine;
 import com.neotys.extensions.action.ActionParameter;
@@ -34,8 +33,8 @@ public final class AMQPCreateChannelActionEngine extends AMQPActionEngine {
 		if (logger.isDebugEnabled()) {
 			logger.debug(request);
 		}
-		final String connectionName = getArgument(parsedArgs, CONNECTIONNAME).get();
-		final String channelName = getArgument(parsedArgs, CHANNELNAME).get();
+		final String connectionName = parsedArgs.get(CONNECTIONNAME.getOption().getName()).or("");
+		final String channelName = parsedArgs.get(CHANNELNAME.getOption().getName()).or("");
 		
 		final Connection connection = AMQPActionEngine.getConnection(context, connectionName);
 		if(connection == null){
@@ -54,8 +53,4 @@ public final class AMQPCreateChannelActionEngine extends AMQPActionEngine {
 		}
 		return newOkResult(context, request, "Channel created on AMQP connection.");
 	}	
-	
-	private static final Optional<String> getArgument(Map<String, com.google.common.base.Optional<String>> parsedArgs, final AMQPCreateChannelParameter parameter){
-		return Optional.ofNullable(parsedArgs.get(parameter.getOption().getName()).orNull());				
-	}
 }

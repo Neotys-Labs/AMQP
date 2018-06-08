@@ -6,7 +6,6 @@ import static com.neotys.amqp.disconnect.AMQPDisconnectParameter.CONNECTIONNAME;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.neotys.amqp.common.AMQPActionEngine;
 import com.neotys.extensions.action.ActionParameter;
@@ -34,7 +33,7 @@ public final class AMQPDisconnectActionEngine extends AMQPActionEngine {
 		if (logger.isDebugEnabled()) {
 			logger.debug(request);
 		}
-		final String connectionName = getArgument(parsedArgs, CONNECTIONNAME).get();
+		final String connectionName = parsedArgs.get(CONNECTIONNAME.getOption().getName()).or("");
 		final Connection connection = AMQPActionEngine.removeConnection(context, connectionName);
 		if(connection == null){
 			return newErrorResult(context, request, STATUS_CODE_INVALID_PARAMETER,
@@ -46,9 +45,5 @@ public final class AMQPDisconnectActionEngine extends AMQPActionEngine {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_DISCONNECTION, "Error while disconnecting with AMQP server.", e);
 		}
 		return newOkResult(context, request, "AMQP connection closed.");
-	}
-	
-	private static final Optional<String> getArgument(Map<String, com.google.common.base.Optional<String>> parsedArgs, final AMQPDisconnectParameter parameter){
-		return Optional.ofNullable(parsedArgs.get(parameter.getOption().getName()).orNull());				
-	}
+	}	
 }
