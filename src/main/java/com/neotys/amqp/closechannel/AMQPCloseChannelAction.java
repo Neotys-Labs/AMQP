@@ -1,11 +1,7 @@
 package com.neotys.amqp.closechannel;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import com.neotys.action.argument.Arguments;
 import com.neotys.action.argument.Option.AppearsByDefault;
@@ -22,22 +18,6 @@ public final class AMQPCloseChannelAction extends AMQPAction {
 		return TYPE;
 	}
 	
-	private static final ImageIcon LOGO_ICON;
-
-	static {
-		final URL iconURL = AMQPCloseChannelAction.class.getResource(TYPE + ".png");
-		if (iconURL != null) {
-			LOGO_ICON = new ImageIcon(iconURL);
-		} else {
-			LOGO_ICON = null;
-		}
-	}
-
-	@Override
-	public Icon getIcon() {
-		return LOGO_ICON;
-	}
-
 	@Override
 	public List<ActionParameter> getDefaultActionParameters() {
 		final ArrayList<ActionParameter> parameters = new ArrayList<>();

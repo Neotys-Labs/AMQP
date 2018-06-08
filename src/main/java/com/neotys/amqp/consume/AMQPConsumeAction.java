@@ -1,11 +1,7 @@
 package com.neotys.amqp.consume;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import com.neotys.action.argument.Arguments;
 import com.neotys.action.argument.Option;
@@ -39,22 +35,6 @@ public class AMQPConsumeAction extends AMQPAction {
 	@Override
 	public Class<? extends ActionEngine> getEngineClass() {
 		return AMQPConsumeActionEngine.class;
-	}
-
-	private static final ImageIcon LOGO_ICON;
-
-	static {
-		final URL iconURL = AMQPConsumeAction.class.getResource(TYPE + ".png");
-		if (iconURL != null) {
-			LOGO_ICON = new ImageIcon(iconURL);
-		} else {
-			LOGO_ICON = null;
-		}
-	}
-
-	@Override
-	public Icon getIcon() {
-		return LOGO_ICON;
 	}
 
 	@Override
