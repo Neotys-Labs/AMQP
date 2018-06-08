@@ -6,3 +6,5 @@ com.neotys.amqp.publish.AMQPPublishAction
 com.neotys.amqp.consume.AMQPConsumeAction
 com.neotys.amqp.closechannel.AMQPCloseChannelAction
 com.neotys.amqp.disconnect.AMQPDisconnectAction
+com.neotys.amqp.deletequeue.AMQPDeleteQueueAction
+com.neotys.amqp.deleteexchange.AMQPDeleteExchangeAction

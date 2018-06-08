@@ -40,16 +40,16 @@ public final class AMQPDeclareExchangeActionEngine extends AMQPActionEngine {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_DECLARE_EXCHANGE, "Connection to channel " + channelName + " do not exist.");
 		}
 
+		final String exchangeName = parsedArgs.get(AMQPDeclareExchangeParameter.EXCHANGENAME.getOption().getName()).get();
 		try {
-			declareExchange(context, channel, parsedArgs);
-			return newOkResult(context, request, "Exchange created");
+			declareExchange(context, channel, exchangeName, parsedArgs);
+			return newOkResult(context, request, "Exchange " + exchangeName + " created");
 		} catch (final IOException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_DECLARE_EXCHANGE, "Could not declare exchange: ", exception);
 		}
 	}
 
-	private void declareExchange(final Context context, final Channel channel, final Map<String, Optional<String>> parsedArgs) throws IOException {
-		final String exchangeName = parsedArgs.get(AMQPDeclareExchangeParameter.EXCHANGENAME.getOption().getName()).get();
+	private void declareExchange(final Context context, final Channel channel, final String exchangeName, final Map<String, Optional<String>> parsedArgs) throws IOException {
 		final String exchangeType = parsedArgs.get(AMQPDeclareExchangeParameter.TYPE.getOption().getName()).or("direct");
 		final boolean durable = getBooleanValue(parsedArgs, AMQPDeclareExchangeParameter.DURABLE.getOption(), false);
 		final boolean autoDelete = getBooleanValue(parsedArgs, AMQPDeclareExchangeParameter.AUTODELETE.getOption(), false);
