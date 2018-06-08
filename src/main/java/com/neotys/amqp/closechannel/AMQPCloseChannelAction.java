@@ -1,4 +1,4 @@
-package com.neotys.amqp.disconnect;
+package com.neotys.amqp.closechannel;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,26 +13,26 @@ import com.neotys.amqp.common.AMQPAction;
 import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.ActionEngine;
 
-public final class AMQPDisconnectAction extends AMQPAction {
+public final class AMQPCloseChannelAction extends AMQPAction {
 
-	private static final String TYPE = "amqp-disconnect"; 
-
+	private static final String TYPE = "amqp-close-channel"; 
+	
 	@Override
 	public String getType() {
 		return TYPE;
 	}
-
+	
 	private static final ImageIcon LOGO_ICON;
 
 	static {
-		final URL iconURL = AMQPDisconnectAction.class.getResource(TYPE + ".png");
+		final URL iconURL = AMQPCloseChannelAction.class.getResource(TYPE + ".png");
 		if (iconURL != null) {
 			LOGO_ICON = new ImageIcon(iconURL);
 		} else {
 			LOGO_ICON = null;
 		}
 	}
-	
+
 	@Override
 	public Icon getIcon() {
 		return LOGO_ICON;
@@ -41,8 +41,7 @@ public final class AMQPDisconnectAction extends AMQPAction {
 	@Override
 	public List<ActionParameter> getDefaultActionParameters() {
 		final ArrayList<ActionParameter> parameters = new ArrayList<>();
-
-		for (final AMQPDisconnectParameter parameter : AMQPDisconnectParameter.values()) {
+		for (final AMQPCloseChannelParameter parameter : AMQPCloseChannelParameter.values()) {
 			if (AppearsByDefault.True.equals(parameter.getOption().getAppearsByDefault())) {
 				parameters.add(new ActionParameter(parameter.getOption().getName(), parameter.getOption().getDefaultValue(),
 						parameter.getOption().getType()));
@@ -54,16 +53,16 @@ public final class AMQPDisconnectAction extends AMQPAction {
 
 	@Override
 	public Class<? extends ActionEngine> getEngineClass() {
-		return AMQPDisconnectActionEngine.class;
+		return AMQPCloseChannelActionEngine.class;
 	}
-
+		
 	@Override
-	public boolean getDefaultIsHit() {
+	public boolean getDefaultIsHit(){
 		return false;
 	}
 
 	@Override
 	public String getDescription() {
-		return "Close all AMQP channel and disconnect from AMQP server.\n" + Arguments.getArgumentDescriptions(AMQPDisconnectParameter.getOptions());
+		return "Close the AMQP channel.\n" + Arguments.getArgumentDescriptions(AMQPCloseChannelParameter.getOptions());
 	}
 }

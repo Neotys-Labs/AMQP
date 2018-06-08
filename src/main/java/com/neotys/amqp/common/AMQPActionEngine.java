@@ -4,10 +4,54 @@ import com.neotys.action.result.ResultFactory;
 import com.neotys.extensions.action.engine.ActionEngine;
 import com.neotys.extensions.action.engine.Context;
 import com.neotys.extensions.action.engine.SampleResult;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 
 public abstract class AMQPActionEngine implements ActionEngine {
 
-	protected static final String AMQP_CONNECTION_KEY = "AMQPConnectionKey";
+	private static final String AMQP_CONNECTION_PREFIX = "AMQP_CONNECTION_PREFIX";
+	private static final String AMQP_CHANNEL_PREFIX = "AMQP_CHANNEL_PREFIX";
+	
+	protected static final Connection getConnection(final Context context, final String connectionName){
+		final Object connection = context.getCurrentVirtualUser().get(AMQP_CONNECTION_PREFIX + connectionName);
+		if(connection instanceof Connection){
+			return (Connection) connection;
+		}
+		return null;
+	}
+	
+	protected static final Connection removeConnection(final Context context, final String connectionName){
+		final Object connection = context.getCurrentVirtualUser().remove(AMQP_CONNECTION_PREFIX + connectionName);
+		if(connection instanceof Connection){
+			return (Connection) connection;
+		}
+		return null;
+	}
+	
+	protected static final void setConnection(final Context context, final String connectionName, final Connection connection){
+		context.getCurrentVirtualUser().put(AMQP_CONNECTION_PREFIX + connectionName, connection);
+	}
+
+	protected static final Channel getChannel(final Context context, final String channelName){
+		final Object channel = context.getCurrentVirtualUser().get(AMQP_CHANNEL_PREFIX + channelName);
+		if(channel instanceof Channel){
+			return (Channel) channel;
+		}
+		return null;
+	}
+	
+	protected static final Channel removeChannel(final Context context, final String channelName){
+		final Object channel = context.getCurrentVirtualUser().remove(AMQP_CHANNEL_PREFIX + channelName);
+		if(channel instanceof Channel){
+			return (Channel) channel;
+		}
+		return null;
+	}
+	
+	protected static final void setChannel(final Context context, final String connectionName, final Channel channel){
+		context.getCurrentVirtualUser().put(AMQP_CHANNEL_PREFIX + connectionName, channel);
+	}
+
 	
 	protected static SampleResult newErrorResult(final Context context, final String requestContent, final String statusCode,
 			final String statusMessage, final Exception e) {

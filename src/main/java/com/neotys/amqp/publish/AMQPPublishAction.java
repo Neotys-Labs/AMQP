@@ -1,28 +1,27 @@
 package com.neotys.amqp.publish;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 import com.neotys.action.argument.Arguments;
 import com.neotys.action.argument.Option;
 import com.neotys.amqp.common.AMQPAction;
 import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.ActionEngine;
 
-import javax.swing.*;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 public class AMQPPublishAction extends AMQPAction {
 
-	private static final String DISPLAY_NAME = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault()).getString("publish.displayName");
-	private static final String DISPLAY_PATH = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault()).getString("publish.displayPath");
-
+	private static final String TYPE = "amqp-publish"; 
+	
 	@Override
 	public String getType() {
-		return "AMQPPublish";
+		return TYPE;
 	}
-
+	
 	@Override
 	public List<ActionParameter> getDefaultActionParameters() {
 		final ArrayList<ActionParameter> parameters = new ArrayList<>();
@@ -36,16 +35,16 @@ public class AMQPPublishAction extends AMQPAction {
 
 		return parameters;
 	}
-
+	
 	@Override
 	public Class<? extends ActionEngine> getEngineClass() {
 		return AMQPPublishActionEngine.class;
 	}
-
+	
 	private static final ImageIcon LOGO_ICON;
 
 	static {
-		final URL iconURL = AMQPPublishAction.class.getResource("publish.png");
+		final URL iconURL = AMQPPublishAction.class.getResource(TYPE + ".png");
 		if (iconURL != null) {
 			LOGO_ICON = new ImageIcon(iconURL);
 		} else {
@@ -57,7 +56,7 @@ public class AMQPPublishAction extends AMQPAction {
 	public Icon getIcon() {
 		return LOGO_ICON;
 	}
-
+	
 	@Override
 	public boolean getDefaultIsHit() {
 		return true;
@@ -66,15 +65,5 @@ public class AMQPPublishAction extends AMQPAction {
 	@Override
 	public String getDescription() {
 		return "Publish a message on an AMQP channel.\n" + Arguments.getArgumentDescriptions(AMQPPublishParameter.getOptions());
-	}
-
-	@Override
-	public String getDisplayName() {
-		return DISPLAY_NAME;
-	}
-
-	@Override
-	public String getDisplayPath() {
-		return DISPLAY_PATH;
 	}
 }

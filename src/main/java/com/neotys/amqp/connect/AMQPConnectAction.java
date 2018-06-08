@@ -3,8 +3,6 @@ package com.neotys.amqp.connect;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -15,27 +13,24 @@ import com.neotys.amqp.common.AMQPAction;
 import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.ActionEngine;
 
-public final class AMQPConnectAction extends AMQPAction {
-	
-	private static final String DISPLAY_NAME = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault()).getString("connect.displayName");
-	private static final String DISPLAY_PATH = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault()).getString("connect.displayPath");
+public class AMQPConnectAction extends AMQPAction {
 
+	private static final String TYPE = "amqp-connect"; 
+	
 	@Override
 	public String getType() {
-		return "AMQPConnect";
+		return TYPE;
 	}
-
+	
 	@Override
 	public List<ActionParameter> getDefaultActionParameters() {
 		final ArrayList<ActionParameter> parameters = new ArrayList<>();
-
 		for (final AMQPConnectParameter parameter : AMQPConnectParameter.values()) {
 			if (AppearsByDefault.True.equals(parameter.getOption().getAppearsByDefault())) {
 				parameters.add(new ActionParameter(parameter.getOption().getName(), parameter.getOption().getDefaultValue(),
 						parameter.getOption().getType()));
 			}
 		}
-
 		return parameters;
 	}
 
@@ -43,10 +38,11 @@ public final class AMQPConnectAction extends AMQPAction {
 	public Class<? extends ActionEngine> getEngineClass() {
 		return AMQPConnectActionEngine.class;
 	}
-		
+	
 	private static final ImageIcon LOGO_ICON;
+
 	static {
-		final URL iconURL = AMQPConnectAction.class.getResource("connect.png");
+		final URL iconURL = AMQPConnectAction.class.getResource(TYPE + ".png");
 		if (iconURL != null) {
 			LOGO_ICON = new ImageIcon(iconURL);
 		} else {
@@ -68,14 +64,4 @@ public final class AMQPConnectAction extends AMQPAction {
 	public String getDescription() {
 		return "Connects to an AMQP server to create a channel.\n" + Arguments.getArgumentDescriptions(AMQPConnectParameter.getOptions());
 	}
-
-	@Override
-	public String getDisplayName() {
-		return DISPLAY_NAME;
-	}
-
-	@Override
-	public String getDisplayPath() {
-		return DISPLAY_PATH;
-	}	
 }

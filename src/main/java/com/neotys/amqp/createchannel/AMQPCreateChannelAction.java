@@ -1,4 +1,4 @@
-package com.neotys.amqp.disconnect;
+package com.neotys.amqp.createchannel;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,9 +13,9 @@ import com.neotys.amqp.common.AMQPAction;
 import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.ActionEngine;
 
-public final class AMQPDisconnectAction extends AMQPAction {
+public final class AMQPCreateChannelAction extends AMQPAction {
 
-	private static final String TYPE = "amqp-disconnect"; 
+	private static final String TYPE = "amqp-create-channel"; 
 
 	@Override
 	public String getType() {
@@ -25,7 +25,7 @@ public final class AMQPDisconnectAction extends AMQPAction {
 	private static final ImageIcon LOGO_ICON;
 
 	static {
-		final URL iconURL = AMQPDisconnectAction.class.getResource(TYPE + ".png");
+		final URL iconURL = AMQPCreateChannelAction.class.getResource(TYPE + ".png");
 		if (iconURL != null) {
 			LOGO_ICON = new ImageIcon(iconURL);
 		} else {
@@ -41,29 +41,27 @@ public final class AMQPDisconnectAction extends AMQPAction {
 	@Override
 	public List<ActionParameter> getDefaultActionParameters() {
 		final ArrayList<ActionParameter> parameters = new ArrayList<>();
-
-		for (final AMQPDisconnectParameter parameter : AMQPDisconnectParameter.values()) {
+		for (final AMQPCreateChannelParameter parameter : AMQPCreateChannelParameter.values()) {
 			if (AppearsByDefault.True.equals(parameter.getOption().getAppearsByDefault())) {
 				parameters.add(new ActionParameter(parameter.getOption().getName(), parameter.getOption().getDefaultValue(),
 						parameter.getOption().getType()));
 			}
 		}
-
 		return parameters;
 	}
 
 	@Override
 	public Class<? extends ActionEngine> getEngineClass() {
-		return AMQPDisconnectActionEngine.class;
+		return AMQPCreateChannelActionEngine.class;
 	}
 
 	@Override
-	public boolean getDefaultIsHit() {
+	public boolean getDefaultIsHit(){
 		return false;
 	}
 
 	@Override
 	public String getDescription() {
-		return "Close all AMQP channel and disconnect from AMQP server.\n" + Arguments.getArgumentDescriptions(AMQPDisconnectParameter.getOptions());
+		return "Create a new channel on an AMQP connection.\n" + Arguments.getArgumentDescriptions(AMQPCreateChannelParameter.getOptions());
 	}
 }

@@ -1,7 +1,7 @@
-package com.neotys.amqp.disconnect;
+package com.neotys.amqp.createchannel;
 import static com.neotys.action.argument.DefaultArgumentValidator.NON_EMPTY;
-import static com.neotys.action.argument.Option.AppearsByDefault.*;
-import static com.neotys.action.argument.Option.OptionalRequired.*;
+import static com.neotys.action.argument.Option.AppearsByDefault.True;
+import static com.neotys.action.argument.Option.OptionalRequired.Required;
 import static com.neotys.extensions.action.ActionParameter.Type.TEXT;
 
 import java.util.Arrays;
@@ -18,13 +18,14 @@ import com.neotys.extensions.action.ActionParameter.Type;
  * @author srichert
  * @date 4 juin 2018
  */
-enum AMQPDisconnectParameter {
+enum AMQPCreateChannelParameter {
 
-	CONNECTIONNAME("connectionName", Required, True, TEXT, "myAMQPConnection", "Name of the AMQP connection to disconnect", NON_EMPTY);	
+	CONNECTIONNAME("connectionName", Required, True, TEXT, "myAMQPConnection", "Name of the AMQP connection to use to create a channel.", NON_EMPTY),
+	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "Name of the AMQP channel to be refereced for further usage.", NON_EMPTY);
 
 	private final AMQPParameterOption option;
 	
-	AMQPDisconnectParameter(final String name, final OptionalRequired optionalRequired,
+	AMQPCreateChannelParameter(final String name, final OptionalRequired optionalRequired,
 			final AppearsByDefault appearsByDefault,
 			final Type type, final String defaultValue, final String description,
 			final ArgumentValidator argumentValidator){
@@ -36,7 +37,7 @@ enum AMQPDisconnectParameter {
 	}
 	
 	public static Option[] getOptions() {
-		return Arrays.stream(AMQPDisconnectParameter.values()).map(AMQPDisconnectParameter::getOption).toArray(Option[]::new);
+		return Arrays.stream(AMQPCreateChannelParameter.values()).map(AMQPCreateChannelParameter::getOption).toArray(Option[]::new);
 	}
 
 }
