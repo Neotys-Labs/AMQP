@@ -30,8 +30,10 @@ public class AMQPMessage {
 		return properties;
 	}
 
-	public String getBody() {
-		return body;
+	public void appendToStringBuilder(final StringBuilder stringBuilder) {
+		stringBuilder.append("header: ");
+		properties.appendPropertyDebugStringTo(stringBuilder);
+		stringBuilder.append("\nbody: ").append(body);
 	}
 
 	@Override

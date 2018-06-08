@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.neotys.action.result.ResultFactory.STATUS_CODE_OK;
 
 public abstract class AMQPActionEngine implements ActionEngine {
 
@@ -78,27 +79,37 @@ public abstract class AMQPActionEngine implements ActionEngine {
 	}
 
 	protected static SampleResult newErrorResult(final Context context, final String requestContent, final String statusCode,
-												 final String statusMessage, final Exception e) {
-		final SampleResult result = ResultFactory.newErrorResult(context, statusCode, statusMessage, e);
-		result.setRequestContent(requestContent);
-		return result;
+												 final String responseContent, final Exception e) {
+		context.getLogger().error(responseContent, e);
+		return newResult(context, ResultFactory.State.ERROR, statusCode, responseContent + e.toString(), requestContent);
 	}
 
-	protected static SampleResult newOkResult(final Context context, final String requestContent, final String statusMessage) {
-		final SampleResult result = ResultFactory.newOkResult(context, statusMessage);
-		result.setRequestContent(requestContent);
-		return result;
+	protected static SampleResult newOkResult(final Context context, final String requestContent, final String responseContent) {
+		context.getLogger().error(responseContent);
+		return newResult(context, ResultFactory.State.OK, STATUS_CODE_OK, responseContent, requestContent);
 	}
 
-	protected static SampleResult newOkResult(final Context context, final String requestContent, final String statusMessage, final long duration) {
-		final SampleResult result = AMQPActionEngine.newOkResult(context, requestContent, statusMessage);
+	protected static SampleResult newOkResult(final Context context, final String requestContent, final String responseContent, final long duration) {
+		final SampleResult result = newOkResult(context, requestContent, responseContent);
 		result.setDuration(duration);
 		return result;
 	}
 
 	protected static SampleResult newErrorResult(final Context context, final String requestContent, final String statusCode,
-												 final String statusMessage) {
-		final SampleResult result = ResultFactory.newErrorResult(context, statusCode, statusMessage);
+												 final String responseContent) {
+		context.getLogger().error(responseContent);
+		return newResult(context, ResultFactory.State.ERROR, statusCode, responseContent, requestContent);
+	}
+
+	private static SampleResult newResult(final Context context, ResultFactory.State state, final String statusCode,
+										  final String responseContent, final String requestContent) {
+		final SampleResult result = new SampleResult();
+		result.setStatusCode(statusCode);
+		result.setError(ResultFactory.State.ERROR.equals(state));
+
+		context.getLogger().debug("Action execution finished with status code: " + statusCode);
+
+		result.setResponseContent(responseContent);
 		result.setRequestContent(requestContent);
 		return result;
 	}

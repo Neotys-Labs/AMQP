@@ -53,7 +53,7 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Connection to channel " + channelName + " do not exist.");
 		}
 
-		final String queueName =  parsedArgs.get(AMQPConsumeParameter.QUEUENAME.getOption().getName()).get();
+		final String queueName = parsedArgs.get(AMQPConsumeParameter.QUEUENAME.getOption().getName()).get();
 		final long timeout = getTimeout(parsedArgs);
 		final boolean autoAck = getBooleanValue(parsedArgs, AMQPConsumeParameter.AUTOACK.getOption(), false);
 
@@ -100,8 +100,11 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 		if (context.getLogger().isDebugEnabled()) {
 			context.getLogger().debug("Message received: " + message.toString());
 		}
-		// TODO write message with properties in response
-		return newOkResult(context, request, message.getBody(), endTime - startTime);
+		final StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("Message received:\n");
+		message.appendToStringBuilder(stringBuilder);
+		stringBuilder.append("\n");
+		return newOkResult(context, request, stringBuilder.toString(), endTime - startTime);
 	}
 
 	/**
