@@ -12,7 +12,7 @@
 	<version>0.0.1-SNAPSHOT</version>	
 	
 	<properties>
-		<neoload.installation.folder>C:/Program Files/NeoLoad 6.5</neoload.installation.folder>
+		<!--<neoload.installation.folder>C:/Program Files/NeoLoad 6.5</neoload.installation.folder>-->
 	</properties> 
 	
 	<dependencies>
@@ -87,18 +87,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<!-- copy jar in NeoLoad install location, IDE may need to be launch 
-					with administrator privileges
-			<plugin>				
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<outputDirectory>${neoload.installation.folder}/extlib</outputDirectory>
-				</configuration>
-			</plugin>
-			 -->
+			</plugin>					
 		</plugins>
 	</build>
 	<repositories>

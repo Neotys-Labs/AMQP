@@ -59,9 +59,9 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 			final ConnectionFactory connectionFactory = new ConnectionFactory();
 			connectionFactory.setHost(getArgument(parsedArgs, HOSTNAME).get());
 			connectionFactory.setPort(Integer.parseInt(getArgument(parsedArgs, PORT).get()));
-			getArgument(parsedArgs, USERNAME).ifPresent(u -> connectionFactory.setUsername(u));
-			getArgument(parsedArgs, PASSWORD).ifPresent(p -> connectionFactory.setPassword(p));
-			getArgument(parsedArgs, VIRTUALHOST).ifPresent(v -> connectionFactory.setVirtualHost(v));
+			getArgument(parsedArgs, USERNAME).ifPresent(connectionFactory::setUsername);
+			getArgument(parsedArgs, PASSWORD).ifPresent(connectionFactory::setPassword);
+			getArgument(parsedArgs, VIRTUALHOST).ifPresent(connectionFactory::setVirtualHost);
 			final Optional<String> sslProtocol = getArgument(parsedArgs, SSLPROTOCOL);
 			if (sslProtocol.isPresent()) {
 				final String sslProtocolValue = sslProtocol.get();
@@ -89,9 +89,13 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 								@Override
 								public java.security.cert.X509Certificate[] getAcceptedIssuers() {return null;}
 								@Override
-								public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+								public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+									// Trust all client certificates
+								}
 								@Override
-								public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+								public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+									// Trust all server certificates
+								}
 							}
 					};
 					sslContext.init(kmf.getKeyManagers(), trustAllCerts, new java.security.SecureRandom());
