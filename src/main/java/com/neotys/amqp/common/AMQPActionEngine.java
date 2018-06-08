@@ -37,7 +37,7 @@ public abstract class AMQPActionEngine implements ActionEngine {
 		});
 	}
 
-	protected static final Connection getConnection(final Context context, final String connectionName) {
+	protected static Connection getConnection(final Context context, final String connectionName) {
 		final Object connection = context.getCurrentVirtualUser().get(AMQP_CONNECTION_PREFIX + connectionName);
 		if (connection instanceof Connection) {
 			return (Connection) connection;
@@ -45,7 +45,7 @@ public abstract class AMQPActionEngine implements ActionEngine {
 		return null;
 	}
 
-	protected static final Connection removeConnection(final Context context, final String connectionName) {
+	protected static Connection removeConnection(final Context context, final String connectionName) {
 		final Object connection = context.getCurrentVirtualUser().remove(AMQP_CONNECTION_PREFIX + connectionName);
 		if (connection instanceof Connection) {
 			return (Connection) connection;
@@ -53,11 +53,11 @@ public abstract class AMQPActionEngine implements ActionEngine {
 		return null;
 	}
 
-	protected static final void setConnection(final Context context, final String connectionName, final Connection connection) {
+	protected static void setConnection(final Context context, final String connectionName, final Connection connection) {
 		context.getCurrentVirtualUser().put(AMQP_CONNECTION_PREFIX + connectionName, connection);
 	}
 
-	protected static final Channel getChannel(final Context context, final String channelName) {
+	protected static Channel getChannel(final Context context, final String channelName) {
 		final Object channel = context.getCurrentVirtualUser().get(AMQP_CHANNEL_PREFIX + channelName);
 		if (channel instanceof Channel) {
 			return (Channel) channel;
@@ -65,7 +65,7 @@ public abstract class AMQPActionEngine implements ActionEngine {
 		return null;
 	}
 
-	protected static final Channel removeChannel(final Context context, final String channelName) {
+	protected static Channel removeChannel(final Context context, final String channelName) {
 		final Object channel = context.getCurrentVirtualUser().remove(AMQP_CHANNEL_PREFIX + channelName);
 		if (channel instanceof Channel) {
 			return (Channel) channel;
@@ -73,7 +73,7 @@ public abstract class AMQPActionEngine implements ActionEngine {
 		return null;
 	}
 
-	protected static final void setChannel(final Context context, final String connectionName, final Channel channel) {
+	protected static void setChannel(final Context context, final String connectionName, final Channel channel) {
 		context.getCurrentVirtualUser().put(AMQP_CHANNEL_PREFIX + connectionName, channel);
 	}
 
@@ -180,6 +180,10 @@ public abstract class AMQPActionEngine implements ActionEngine {
 			return Float.valueOf(valueString);
 		}
 		return valueString;
+	}
+
+	protected static boolean getBooleanValue(final Map<String, Optional<String>> parsedArgs, final AMQPParameterOption option, final boolean defaultValue) {
+		return parsedArgs.get(option.getName()).transform(Boolean::parseBoolean).or(defaultValue);
 	}
 
 	@Override

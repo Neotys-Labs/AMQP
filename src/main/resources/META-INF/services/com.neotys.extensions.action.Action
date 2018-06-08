@@ -1,5 +1,7 @@
 com.neotys.amqp.connect.AMQPConnectAction
 com.neotys.amqp.createchannel.AMQPCreateChannelAction
+com.neotys.amqp.declareexchange.AMQPDeclareExchangeAction
+com.neotys.amqp.declarequeue.AMQPDeclareQueueAction
 com.neotys.amqp.publish.AMQPPublishAction
 com.neotys.amqp.consume.AMQPConsumeAction
 com.neotys.amqp.closechannel.AMQPCloseChannelAction
