@@ -173,7 +173,7 @@ public abstract class AMQPActionEngine implements ActionEngine {
 	 * @return return an object value, of type from argument, by its String representation.
 	 */
 	@VisibleForTesting
-	// FIXME to put in common with JMS.
+	// TODO to put in common with JMS.
 	static Object getValueFromType(final Class<?> type, final String valueString) {
 		if (Integer.class.isAssignableFrom(type)) {
 			return Integer.valueOf(valueString);

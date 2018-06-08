@@ -71,7 +71,7 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 	/**
 	 * make sure that exactly one content is provided and that the file path is valid.
 	 */
-	// FIXME to put in common with JMS.
+	// TODO to put in common with JMS.
 	private static void validateContentParameters(final Map<String, Optional<String>> parsedArgs) {
 		final String textContentParameterName = AMQPPublishParameter.TEXTCONTENT.getOption().getName();
 		final Optional<String> textValue = parsedArgs.get(textContentParameterName);
@@ -96,12 +96,12 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 	/**
 	 * @return true if value is absent or null or empty.
 	 */
-	// FIXME to put in common with JMS.
+	// TODO to put in common with JMS.
 	private static boolean isAbsentOrEmpty(final Optional<String> value) {
 		return !value.isPresent() || isNullOrEmpty(value.get());
 	}
 
-	// FIXME to put in common with JMS.
+	// TODO to put in common with JMS.
 	private String getMessageContent(final Context context, final Map<String, Optional<String>> parsedArgs) throws IOException {
 		final Optional<String> textContent = parsedArgs.get(AMQPPublishParameter.TEXTCONTENT.getOption().getName());
 		if (textContent.isPresent() && !Strings.isNullOrEmpty(textContent.get())) {
@@ -119,7 +119,7 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 	/**
 	 * Read the content of the file according to charset.
 	 */
-	// FIXME to put in common with JMS.
+	// TODO to put in common with JMS.
 	private static String readFile(final String filePath, final Optional<String> charset) throws IOException {
 		try (final InputStream is = new FileInputStream(filePath);
 			 final InputStreamReader isr = getInputStreamReader(is, charset);
@@ -139,7 +139,7 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 	/**
 	 * Avoid to have a compilation warning on eclipse in a try with resources.
 	 */
-	// FIXME to put in common with JMS.
+	// TODO to put in common with JMS.
 	private static InputStreamReader getInputStreamReader(final InputStream is, final Optional<String> charset) throws UnsupportedEncodingException {
 		return charset.isPresent() ? new InputStreamReader(is, charset.get()) : new InputStreamReader(is);
 	}
