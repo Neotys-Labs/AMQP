@@ -16,6 +16,7 @@ import java.security.KeyStore;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -50,15 +51,15 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 		if (logger.isDebugEnabled()) {
 			logger.debug(request);
 		}
-		final String connectionName = getArgument(parsedArgs, CONNECTIONNAME).get();
+		final String connectionName = getArgument(parsedArgs, CONNECTIONNAME).orElse("");
 		if (AMQPActionEngine.getConnection(context, connectionName) != null) {
 			return newErrorResult(context, request, STATUS_CODE_INVALID_PARAMETER,
 					"A AMQP connection already exists with name " + connectionName + ".");
 		}
 		try {
 			final ConnectionFactory connectionFactory = new ConnectionFactory();
-			connectionFactory.setHost(getArgument(parsedArgs, HOSTNAME).get());
-			connectionFactory.setPort(Integer.parseInt(getArgument(parsedArgs, PORT).get()));
+			connectionFactory.setHost(getArgument(parsedArgs, HOSTNAME).orElse(""));
+			connectionFactory.setPort(Integer.parseInt(getArgument(parsedArgs, PORT).orElse("")));
 			getArgument(parsedArgs, USERNAME).ifPresent(connectionFactory::setUsername);
 			getArgument(parsedArgs, PASSWORD).ifPresent(connectionFactory::setPassword);
 			getArgument(parsedArgs, VIRTUALHOST).ifPresent(connectionFactory::setVirtualHost);
@@ -87,7 +88,9 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 					final TrustManager[] trustAllCerts = new TrustManager[] {
 							new X509TrustManager() {
 								@Override
-								public java.security.cert.X509Certificate[] getAcceptedIssuers() {return null;}
+								public X509Certificate[] getAcceptedIssuers() {
+									return new X509Certificate[0];
+								}
 								@Override
 								public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 									// Trust all client certificates

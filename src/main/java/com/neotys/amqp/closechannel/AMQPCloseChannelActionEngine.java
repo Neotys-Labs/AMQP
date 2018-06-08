@@ -6,7 +6,6 @@ import static com.neotys.amqp.closechannel.AMQPCloseChannelParameter.CHANNELNAME
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.neotys.amqp.common.AMQPActionEngine;
 import com.neotys.extensions.action.ActionParameter;
@@ -34,7 +33,7 @@ public final class AMQPCloseChannelActionEngine extends AMQPActionEngine {
 		if (logger.isDebugEnabled()) {
 			logger.debug(request);
 		}
-		final String channelName = getArgument(parsedArgs, CHANNELNAME).get();
+		final String channelName = parsedArgs.get(CHANNELNAME.getOption().getName()).or("");		
 		final Channel channel = AMQPActionEngine.removeChannel(context, channelName);
 		if(channel == null){
 			return newErrorResult(context, request, STATUS_CODE_INVALID_PARAMETER,
@@ -46,9 +45,5 @@ public final class AMQPCloseChannelActionEngine extends AMQPActionEngine {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CLOSECHANNEL, "Error while closing APQM channel.", e);
 		}
 		return newOkResult(context, request, "AMQP channel closed.");
-	}
-	
-	private static final Optional<String> getArgument(Map<String, com.google.common.base.Optional<String>> parsedArgs, final AMQPCloseChannelParameter parameter){
-		return Optional.ofNullable(parsedArgs.get(parameter.getOption().getName()).orNull());				
-	}
+	}	
 }
