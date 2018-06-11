@@ -43,8 +43,10 @@ public final class AMQPDeleteQueueEngine extends AMQPActionEngine {
 
 		final String queueName = parsedArgs.get(AMQPDeleteQueueParameter.QUEUENAME.getOption().getName()).get();
 		try {
+			final long startTime = System.currentTimeMillis();
 			channel.queueDelete(queueName);
-			return newOkResult(context, request, "Queue " + queueName + " deleted.");
+			final long endTime = System.currentTimeMillis();
+			return newOkResult(context, request, "Queue " + queueName + " deleted.", endTime - startTime);
 		} catch (final IOException | AlreadyClosedException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_DELETE_QUEUE, "Could not declare exchange: ", exception);
 		}

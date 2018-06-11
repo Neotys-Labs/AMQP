@@ -62,8 +62,10 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 				logger.debug("Message content: " + messageContent);
 			}
 			final byte[] messageBytes = messageContent.getBytes();
+			final long startTime = System.currentTimeMillis();
 			channel.basicPublish(exchange, routingKey, properties, messageBytes);
-			return newOkResult(context, request, "Message published on channel " + channelName + ".");
+			final long endTime = System.currentTimeMillis();
+			return newOkResult(context, request, "Message published on channel " + channelName + ".", endTime - startTime);
 		} catch (final IOException | AlreadyClosedException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_PUBLISH, "Could not publish on channel ", exception);
 		}

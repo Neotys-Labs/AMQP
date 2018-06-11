@@ -135,14 +135,16 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 			}			
 			final int consumerThredPoolSize = getArgument(parsedArgs, CONSUMERTHREADPOOLSIZE).map(Integer::parseInt).orElse(1);
 			final ExecutorService executor = Executors.newFixedThreadPool(consumerThredPoolSize);
+			final long startTime = System.currentTimeMillis();
 			AMQPActionEngine.setConnection(context, connectionName, connectionFactory.newConnection(executor));
+			final long endTime = System.currentTimeMillis();
+			return newOkResult(context, request, "Connected to AMQP server.", endTime - startTime);
 		} catch (final Exception e) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONNECTION, "Cannot create connection to AMQP server.", e);
 		}
-		return newOkResult(context, request, "Connected to AMQP server.");
 	}
 
-	private static final Optional<String> getArgument(Map<String, com.google.common.base.Optional<String>> parsedArgs,
+	private static Optional<String> getArgument(Map<String, com.google.common.base.Optional<String>> parsedArgs,
 			final AMQPConnectParameter parameter) {
 		return Optional.ofNullable(parsedArgs.get(parameter.getOption().getName()).orNull());
 	}

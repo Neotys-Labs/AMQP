@@ -41,8 +41,10 @@ public final class AMQPDeclareQueueEngine extends AMQPActionEngine {
 		}
 
 		try {
+			final long startTime = System.currentTimeMillis();
 			final String queueName = declareQueue(context, channel, parsedArgs);
-			return newOkResult(context, request, "Queue " + queueName + " created");
+			final long endTime = System.currentTimeMillis();
+			return newOkResult(context, request, "Queue " + queueName + " created", endTime - startTime);
 		} catch (final IOException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_DECLARE_QUEUE, "Could not declare queue: ", exception);
 		}

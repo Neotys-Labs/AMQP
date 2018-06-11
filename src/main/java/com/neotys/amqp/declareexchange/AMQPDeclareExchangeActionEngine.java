@@ -42,20 +42,23 @@ public final class AMQPDeclareExchangeActionEngine extends AMQPActionEngine {
 
 		final String exchangeName = parsedArgs.get(AMQPDeclareExchangeParameter.EXCHANGENAME.getOption().getName()).get();
 		try {
-			declareExchange(context, channel, exchangeName, parsedArgs);
-			return newOkResult(context, request, "Exchange " + exchangeName + " created");
+			final long duration = declareExchange(context, channel, exchangeName, parsedArgs);
+			return newOkResult(context, request, "Exchange " + exchangeName + " created", duration);
 		} catch (final IOException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_DECLARE_EXCHANGE, "Could not declare exchange: ", exception);
 		}
 	}
 
-	private void declareExchange(final Context context, final Channel channel, final String exchangeName, final Map<String, Optional<String>> parsedArgs) throws IOException {
+	private long declareExchange(final Context context, final Channel channel, final String exchangeName, final Map<String, Optional<String>> parsedArgs) throws IOException {
 		final String exchangeType = parsedArgs.get(AMQPDeclareExchangeParameter.TYPE.getOption().getName()).or("direct");
 		final boolean durable = getBooleanValue(parsedArgs, AMQPDeclareExchangeParameter.DURABLE.getOption(), false);
 		final boolean autoDelete = getBooleanValue(parsedArgs, AMQPDeclareExchangeParameter.AUTODELETE.getOption(), false);
 		final Map<String, Object> arguments = getProperties(context.getLogger(), parsedArgs, AMQPDeclareExchangeParameter.ARGUMENTS.getOption(), "argument");
 		context.getLogger().debug("Declaring exchange: " + exchangeName);
+		final long startTime = System.currentTimeMillis();
 		channel.exchangeDeclare(exchangeName, exchangeType, durable, autoDelete, arguments);
+		final long endTime = System.currentTimeMillis();
+		return endTime - startTime;
 	}
 
 }

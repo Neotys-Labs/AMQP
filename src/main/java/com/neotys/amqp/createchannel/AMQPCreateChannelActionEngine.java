@@ -46,11 +46,13 @@ public final class AMQPCreateChannelActionEngine extends AMQPActionEngine {
 					"A AMQP channel already exists with name " + channelName + ".");
 		}	
 							
-		try {						
+		try {
+			final long startTime = System.currentTimeMillis();
 			AMQPActionEngine.setChannel(context, channelName, connection.createChannel());
+			final long endTime = System.currentTimeMillis();
+			return newOkResult(context, request, "Channel created on AMQP connection.", endTime - startTime);
 		} catch (final Exception e) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CHANNEL_CREATION, "Cannot create channel on AMQP connection.", e);
 		}
-		return newOkResult(context, request, "Channel created on AMQP connection.");
 	}	
 }

@@ -42,8 +42,10 @@ public final class AMQPDeleteExchangeActionEngine extends AMQPActionEngine {
 
 		final String exchangeName = parsedArgs.get(AMQPDeleteExchangeParameter.EXCHANGENAME.getOption().getName()).get();
 		try {
+			final long startTime = System.currentTimeMillis();
 			channel.exchangeDelete(exchangeName);
-			return newOkResult(context, request, "Exchange "+exchangeName+" deleted.");
+			final long endTime = System.currentTimeMillis();
+			return newOkResult(context, request, "Exchange "+exchangeName+" deleted.", endTime - startTime);
 		} catch (final IOException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_DELETE_EXCHANGE, "Could not delete exchange: ", exception);
 		}

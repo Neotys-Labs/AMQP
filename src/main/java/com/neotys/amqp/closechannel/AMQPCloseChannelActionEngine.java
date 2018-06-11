@@ -39,11 +39,13 @@ public final class AMQPCloseChannelActionEngine extends AMQPActionEngine {
 			return newErrorResult(context, request, STATUS_CODE_INVALID_PARAMETER,
 					"No AMQP channel found with name " + channelName + ".");
 		}
+		final long startTime = System.currentTimeMillis();
 		try {
 			channel.close();
 		} catch (final Exception e) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CLOSECHANNEL, "Error while closing APQM channel.", e);
 		}
-		return newOkResult(context, request, "AMQP channel closed.");
+		final long endTime = System.currentTimeMillis();
+		return newOkResult(context, request, "AMQP channel closed.", endTime - startTime);
 	}	
 }

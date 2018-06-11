@@ -41,10 +41,12 @@ public final class AMQPDisconnectActionEngine extends AMQPActionEngine {
 					"No AMQP connection found with name " + connectionName + ".");
 		}
 		try {
+			final long startTime = System.currentTimeMillis();
 			connection.close(timeout);
+			final long endTime = System.currentTimeMillis();
+			return newOkResult(context, request, "AMQP connection closed.", endTime - startTime);
 		} catch (final Exception e) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_DISCONNECTION, "Error while disconnecting with AMQP server.", e);
 		}
-		return newOkResult(context, request, "AMQP connection closed.");
 	}	
 }
