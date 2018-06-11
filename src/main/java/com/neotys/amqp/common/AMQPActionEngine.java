@@ -85,7 +85,6 @@ public abstract class AMQPActionEngine implements ActionEngine {
 	}
 
 	protected static SampleResult newOkResult(final Context context, final String requestContent, final String responseContent) {
-		context.getLogger().error(responseContent);
 		return newResult(context, ResultFactory.State.OK, STATUS_CODE_OK, responseContent, requestContent);
 	}
 
