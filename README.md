@@ -77,6 +77,21 @@ Status Codes:
 
 ### Channel - Create
 
+This Advanced Action creates a new channel on an AMQP connection.
+Parameters: 
+
+| Name                     | Description       |
+| ---------------          | ----------------- |
+| connectionName | Name of the AMQP connection to use to create a channel. |
+| channelName | Name of the AMQP channel to be referenced for further usage. |  
+
+Example: 
+<p align="center"><img src="/screenshots/create_channel.png" alt="Create Channel" /></p>
+
+Status Codes:
+* NL-AMQP-CREATECHANNEL-ACTION-01: Invalid parameter.
+* NL-AMQP-CREATECHANNEL-ACTION-02: Issue creation channel. 
+
 ### Channel - Close
 
 ### Exchange - Declare
