@@ -42,8 +42,10 @@ enum AMQPConnectParameter {
 	NETWORKRECOVERYINTERVAL("networkRecoveryInterval", Optional, False, TEXT, "5000", "Sets connection recovery interval (milliseconds).", LONG_VALIDATOR),
 	CHANNELSHOULDCHECKRPCRESPONSETYPE("channelShouldCheckRpcResponseType", Optional, False, TEXT, "", "Define if the AMQP channel should check the RPC response type or not (true or false).", BOOLEAN_VALIDATOR),
 	WORKPOOLTIMEOUT("workPoolTimeout", Optional, False, TEXT, "", "Timeout in milliseconds for work pool enqueueing. The WorkPool dispatches several types of responses from the broker (e.g. deliveries). A high-traffic client with slow consumers can exhaust the work pool and compromise the whole connection (by e.g. letting the broker saturate the receive TCP buffers). Setting a timeout would make the connection fail early and avoid hard-to-diagnose TCP connection failure. Note this shouldn't happen with clients that set appropriate QoS values.", INTEGER_VALIDATOR),
-	CHANNELRPCTIMEOUT("channelRpcTimeout", Optional, False, TEXT, "", "Continuation timeout in milliseconds for RPC calls in channels.", INTEGER_VALIDATOR);	
-
+	CHANNELRPCTIMEOUT("channelRpcTimeout", Optional, False, TEXT, "", "Continuation timeout in milliseconds for RPC calls in channels.", INTEGER_VALIDATOR), 
+	DISABLENIO("disableNio", Optional, False, TEXT, "", "Enables or disables the Nio mode. Default is false, it is using Nio. Set to true to disable the Nio Mode.", BOOLEAN_VALIDATOR),
+	CONSUMERTHREADPOOLSIZE("consumerThreadPoolSize", Optional, False, TEXT, "1", "Size of the thread pool for the AMQP Consumer.", INTEGER_VALIDATOR);
+	
 	private final AMQPParameterOption option;
 	
 	AMQPConnectParameter(final String name, final OptionalRequired optionalRequired,

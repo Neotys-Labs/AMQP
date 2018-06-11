@@ -6,6 +6,8 @@ import static com.neotys.amqp.connect.AMQPConnectParameter.CHANNELRPCTIMEOUT;
 import static com.neotys.amqp.connect.AMQPConnectParameter.CHANNELSHOULDCHECKRPCRESPONSETYPE;
 import static com.neotys.amqp.connect.AMQPConnectParameter.CONNECTIONNAME;
 import static com.neotys.amqp.connect.AMQPConnectParameter.CONNECTIONTIMEOUT;
+import static com.neotys.amqp.connect.AMQPConnectParameter.CONSUMERTHREADPOOLSIZE;
+import static com.neotys.amqp.connect.AMQPConnectParameter.DISABLENIO;
 import static com.neotys.amqp.connect.AMQPConnectParameter.HANDSHAKETIMEOUT;
 import static com.neotys.amqp.connect.AMQPConnectParameter.HOSTNAME;
 import static com.neotys.amqp.connect.AMQPConnectParameter.NETWORKRECOVERYINTERVAL;
@@ -26,6 +28,8 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -126,8 +130,12 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 			getArgument(parsedArgs, CHANNELSHOULDCHECKRPCRESPONSETYPE).map(Boolean::parseBoolean).ifPresent(connectionFactory::setChannelShouldCheckRpcResponseType);
 			getArgument(parsedArgs, WORKPOOLTIMEOUT).map(Integer::parseInt).ifPresent(connectionFactory::setWorkPoolTimeout);
 			getArgument(parsedArgs, CHANNELRPCTIMEOUT).map(Integer::parseInt).ifPresent(connectionFactory::setChannelRpcTimeout);
-			
-			AMQPActionEngine.setConnection(context, connectionName, connectionFactory.newConnection());
+			if(!getArgument(parsedArgs, DISABLENIO).map(Boolean::parseBoolean).orElse(false)){
+				connectionFactory.useNio();
+			}			
+			final int consumerThredPoolSize = getArgument(parsedArgs, CONSUMERTHREADPOOLSIZE).map(Integer::parseInt).orElse(1);
+			final ExecutorService executor = Executors.newFixedThreadPool(consumerThredPoolSize);
+			AMQPActionEngine.setConnection(context, connectionName, connectionFactory.newConnection(executor));
 		} catch (final Exception e) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONNECTION, "Cannot create connection to AMQP server.", e);
 		}
