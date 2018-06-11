@@ -8,6 +8,7 @@ import com.neotys.extensions.action.engine.Context;
 import com.neotys.extensions.action.engine.Logger;
 import com.neotys.extensions.action.engine.SampleResult;
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.AlreadyClosedException;
 import com.rabbitmq.client.Channel;
 
 import java.io.*;
@@ -63,7 +64,7 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 			final byte[] messageBytes = messageContent.getBytes();
 			channel.basicPublish(exchange, routingKey, properties, messageBytes);
 			return newOkResult(context, request, "Message published on channel " + channelName + ".");
-		} catch (final IOException exception) {
+		} catch (final IOException | AlreadyClosedException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_PUBLISH, "Could not publish on channel ", exception);
 		}
 	}
