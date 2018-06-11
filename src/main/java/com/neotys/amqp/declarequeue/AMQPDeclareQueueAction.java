@@ -39,6 +39,6 @@ public class AMQPDeclareQueueAction extends AMQPAction {
 
 	@Override
 	public String getDescription() {
-		return "Publish a message on an AMQP channel.\n" + Arguments.getArgumentDescriptions(AMQPDeclareQueueParameter.getOptions());
+		return "Declare a Queue on an AMQP channel.\n" + Arguments.getArgumentDescriptions(AMQPDeclareQueueParameter.getOptions());
 	}
 }

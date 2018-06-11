@@ -110,7 +110,7 @@ Status Codes:
 
 ### Exchange - Declare
 
-This Advanced Action publishes a message on an AMQP channel.
+This Advanced Action declares an exchange on the AMQP channel.
 Parameters: 
 
 | Name                     | Description       |
@@ -130,6 +130,39 @@ Status Codes:
 * NL-AMQP-DECLARE-EXCHANGE-ACTION-02: Issue while declaring exchange. 
 
 ### Exchange - Publish 
+
+This Advanced Action publishes a message on an AMQP channel.
+Parameters: 
+
+| Name                     | Description       |
+| ---------------          | ----------------- |
+| channelName | Name of the AMQP channel. |  
+| exchangeName | Name of the AMQP exchange where the message will be published. |  
+| routingKey | AMQP routing key. |
+| textContent | The message content. |
+| contentFile.path | The path of the content file. Use the variable **${NL-CustomResources}** to access on the Load Generator the synchronized resources located in the **custom-resources** folder of the project. |
+| contentFile.charset | The charset of the file. |
+| parseFile | Whether to parse the file to replace variables. Default value is false. |
+| contentType | The message content type. |
+| contentEncoding | The message content encoding. |
+| headers | You can setup the name, the value and the class (type) of a header. Default type is String. The header must follow the pattern name=[class]value separated by '\\n'. Example : size=[java.lang.Integer]150. One line per header. |
+| persistent | Whether the message will be persisted. Default value is false. |
+| priority | The message priority. Default value is 0. |  
+| replyTo | The message queue to reply to. |
+| expiration | The message expiration. |
+| messageId | The message ID. |
+| timestamp | The message timestamp as a long specifying the number of milliseconds since the standard base time known as the epoch. |
+| type | The message type. |
+| userId | The message user ID. |
+| appId | The message app ID. |
+| clusterId | The message cluster ID. |
+
+Example: 
+<p align="center"><img src="/screenshots/excvhange_publish.png" alt="Exchange Publish" /></p>
+
+Status Codes:
+* NL-AMQP-PUBLISH-ACTION-01: Invalid parameter.
+* NL-AMQP-PUBLISH-ACTION-02: Issue while publishing on channel. 
 
 ### Exchange - Delete
 

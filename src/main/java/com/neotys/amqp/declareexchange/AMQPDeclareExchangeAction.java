@@ -39,6 +39,6 @@ public class AMQPDeclareExchangeAction extends AMQPAction {
 
 	@Override
 	public String getDescription() {
-		return "Publish a message on an AMQP channel.\n" + Arguments.getArgumentDescriptions(AMQPDeclareExchangeParameter.getOptions());
+		return "Declare an exchange on the AMQP channel.\n" + Arguments.getArgumentDescriptions(AMQPDeclareExchangeParameter.getOptions());
 	}
 }
