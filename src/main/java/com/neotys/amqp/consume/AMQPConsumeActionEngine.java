@@ -8,10 +8,7 @@ import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.Context;
 import com.neotys.extensions.action.engine.Logger;
 import com.neotys.extensions.action.engine.SampleResult;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -62,7 +59,7 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 		} catch (final InterruptedException exception){
 			Thread.currentThread().interrupt();
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Could not consume: ", exception);
-		} catch (final ExecutionException | IOException exception) {
+		} catch (final ExecutionException | IOException | AlreadyClosedException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Could not consume: ", exception);
 		} catch (final TimeoutException e) {
 			final String statusMessage = "Message not received before timeout of " + timeout + " ms.";
