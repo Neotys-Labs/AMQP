@@ -23,7 +23,7 @@ import static com.neotys.extensions.action.ActionParameter.Type.TEXT;
 enum AMQPPublishParameter {
 
 	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "Name of the AMQP channel.", NON_EMPTY),
-	EXCHANGE("exchange", Required, True, TEXT, "myAMQPExchange", "Name of the AMQP exchange where the message will be published.", NON_EMPTY),
+	EXCHANGE("exchangeName", Required, True, TEXT, "myAMQPExchange", "Name of the AMQP exchange where the message will be published.", NON_EMPTY),
 	ROUTINGKEY("routingKey", Required, True, TEXT, "my.routing.key", "AMQP routing key.", NON_EMPTY),
 
 	TEXTCONTENT("textContent", Optional, True, TEXT, "", "The message content.", ALWAYS_VALID),

@@ -36,11 +36,6 @@ public final class AMQPCreateChannelAction extends AMQPAction {
 	}
 
 	@Override
-	public boolean getDefaultIsHit(){
-		return false;
-	}
-
-	@Override
 	public String getDescription() {
 		return "Create a new channel on an AMQP connection.\n" + Arguments.getArgumentDescriptions(AMQPCreateChannelParameter.getOptions());
 	}

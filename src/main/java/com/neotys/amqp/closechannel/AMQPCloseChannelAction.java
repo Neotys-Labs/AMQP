@@ -35,11 +35,6 @@ public final class AMQPCloseChannelAction extends AMQPAction {
 	public Class<? extends ActionEngine> getEngineClass() {
 		return AMQPCloseChannelActionEngine.class;
 	}
-		
-	@Override
-	public boolean getDefaultIsHit(){
-		return false;
-	}
 
 	@Override
 	public String getDescription() {

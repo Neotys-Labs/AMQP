@@ -38,11 +38,6 @@ public final class AMQPDisconnectAction extends AMQPAction {
 	}
 
 	@Override
-	public boolean getDefaultIsHit() {
-		return false;
-	}
-
-	@Override
 	public String getDescription() {
 		return "Close all AMQP channel and disconnect from AMQP server.\n" + Arguments.getArgumentDescriptions(AMQPDisconnectParameter.getOptions());
 	}

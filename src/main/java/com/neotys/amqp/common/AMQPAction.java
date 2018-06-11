@@ -32,6 +32,11 @@ public abstract class AMQPAction implements Action{
 	public final String getDisplayPath() {
 		return DISPLAY_PATH;
 	}
+
+	@Override
+	public boolean getDefaultIsHit(){
+		return true;
+	}
 	
 	@Override
 	public final String getDisplayName() {

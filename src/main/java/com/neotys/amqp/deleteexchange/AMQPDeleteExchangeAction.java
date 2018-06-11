@@ -38,11 +38,6 @@ public class AMQPDeleteExchangeAction extends AMQPAction {
 	}
 
 	@Override
-	public boolean getDefaultIsHit() {
-		return true;
-	}
-
-	@Override
 	public String getDescription() {
 		return "Publish a message on an AMQP channel.\n" + Arguments.getArgumentDescriptions(AMQPDeleteExchangeParameter.getOptions());
 	}

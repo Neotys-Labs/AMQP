@@ -36,11 +36,6 @@ public class AMQPPublishAction extends AMQPAction {
 	public Class<? extends ActionEngine> getEngineClass() {
 		return AMQPPublishActionEngine.class;
 	}
-		
-	@Override
-	public boolean getDefaultIsHit() {
-		return true;
-	}
 
 	@Override
 	public String getDescription() {
