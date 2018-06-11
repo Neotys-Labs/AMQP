@@ -1,4 +1,4 @@
-<p align="center"><img src="/screenshots/logo-amqp.png" width="80%" alt="AMQP Logo" /></p>
+<p align="center"><img src="/screenshots/logo-amqp.png" width="40%" alt="AMQP Logo" /></p>
 
 # AMQP
 The [Advanced Message Queuing Protocol (AMQP)](https://www.amqp.org/) is an open standard application layer protocol for high performance enterprise messaging.
@@ -28,6 +28,7 @@ This repository contains NeoLoad Advanced Actions that allows performance tester
 
 This Advanced Action establishes a connection to a AMQP server. 
 Parameters: 
+
 | Name                     | Description       |
 | ---------------          | ----------------- |
 | connectionName | Name of the AMQP connection to be refereced for further usage. |
@@ -55,6 +56,20 @@ Status Codes:
 * NL-AMQP-CONNECT-ACTION-02: Issue connecting to the AMQP server. 
 
 ### Disconnect
+
+This Advanced Action closes all AMQP channel and disconnect from AMQP server.
+Parameters: 
+
+| Name                     | Description       |
+| ---------------          | ----------------- |
+| connectionName | Name of the AMQP connection to disconnect. |
+| timeout | Set the shutdown timeout in milliseconds. |  
+
+
+Status Codes:
+* NL-AMQP-DISCONNECT-ACTION-01: Invalid parameter.
+* NL-AMQP-DISCONNECT-ACTION-02: Issue disconnecting from the AMQP server. 
+
 
 ### Channel - Create
 
