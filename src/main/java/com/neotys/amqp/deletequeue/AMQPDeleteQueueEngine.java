@@ -6,6 +6,7 @@ import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.Context;
 import com.neotys.extensions.action.engine.Logger;
 import com.neotys.extensions.action.engine.SampleResult;
+import com.rabbitmq.client.AlreadyClosedException;
 import com.rabbitmq.client.Channel;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ public final class AMQPDeleteQueueEngine extends AMQPActionEngine {
 		try {
 			channel.queueDelete(queueName);
 			return newOkResult(context, request, "Queue " + queueName + " deleted.");
-		} catch (final IOException exception) {
+		} catch (final IOException | AlreadyClosedException exception) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_DELETE_QUEUE, "Could not declare exchange: ", exception);
 		}
 	}
