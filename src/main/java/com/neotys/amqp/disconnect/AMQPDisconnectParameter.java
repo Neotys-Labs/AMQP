@@ -1,4 +1,5 @@
 package com.neotys.amqp.disconnect;
+import static com.neotys.action.argument.DefaultArgumentValidator.INTEGER_VALIDATOR;
 import static com.neotys.action.argument.DefaultArgumentValidator.NON_EMPTY;
 import static com.neotys.action.argument.Option.AppearsByDefault.*;
 import static com.neotys.action.argument.Option.OptionalRequired.*;
@@ -20,7 +21,8 @@ import com.neotys.extensions.action.ActionParameter.Type;
  */
 enum AMQPDisconnectParameter {
 
-	CONNECTIONNAME("connectionName", Required, True, TEXT, "myAMQPConnection", "Name of the AMQP connection to disconnect", NON_EMPTY);	
+	CONNECTIONNAME("connectionName", Required, True, TEXT, "myAMQPConnection", "Name of the AMQP connection to disconnect", NON_EMPTY),
+	TIMEOUT("timeout", Optional, False, TEXT, "", "Set the shutdown timeout in milliseconds.", INTEGER_VALIDATOR);
 
 	private final AMQPParameterOption option;
 	

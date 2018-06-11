@@ -37,7 +37,7 @@ enum AMQPConnectParameter {
 	REQUESTEDFRAMEMAX("requestedFrameMax", Optional, False, TEXT, "", "Frame-max parameter to ask for (in bytes).", INTEGER_VALIDATOR),
 	CONNECTIONTIMEOUT("connectionTimeout", Optional, False, TEXT, "", "Timeout setting for connection attempts (in milliseconds).", INTEGER_VALIDATOR),
 	HANDSHAKETIMEOUT("handshakeTimeout", Optional, False, TEXT, "", "Set the AMQP0-9-1 protocol handshake timeout.", INTEGER_VALIDATOR),
-	SHUTDOWNTIMEOUT("shutdownTimeout", Optional, False, TEXT, "", "Set the shutdown timeout.", INTEGER_VALIDATOR),
+	SHUTDOWNTIMEOUT("shutdownTimeout", Optional, False, TEXT, "", "Set the shutdown timeout in milliseconds.", INTEGER_VALIDATOR),
 	TOPOLOGYRECOVERYENABLED("topologyRecoveryEnabled", Optional, False, TEXT, "", "Enables or disables topology recovery (true or false).", BOOLEAN_VALIDATOR),
 	NETWORKRECOVERYINTERVAL("networkRecoveryInterval", Optional, False, TEXT, "5000", "Sets connection recovery interval (milliseconds).", LONG_VALIDATOR),
 	CHANNELSHOULDCHECKRPCRESPONSETYPE("channelShouldCheckRpcResponseType", Optional, False, TEXT, "", "Define if the AMQP channel should check the RPC response type or not (true or false).", BOOLEAN_VALIDATOR),
