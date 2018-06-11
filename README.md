@@ -139,7 +139,14 @@ Status Codes:
 
 ### Queue - Delete
 
+## User Path examples
 
+### Simple Publish
 
+The following User Path establish a connection and create a channel in the "Init" section. In the "Actions" section, a message is published on an already declared exchange. Finally in the "End" section, the channel is closed and the connection is closed. 
+<p align="center"><img src="/screenshots/simple-publish.png" alt="Publish" /></p>
 
+### Publish and then Consume
 
+The following User Path establish a connection, create a channel, create an exchange and create a queue in the "Init" section. In the "Actions" section, a message is published and a response is consumed. Finally in the "End" section, the queue and the exchange are deleted the channel is closed and the connection is closed.
+<p align="center"><img src="/screenshots/publish-and-consume.png" alt="Publish and Consume" /></p>
