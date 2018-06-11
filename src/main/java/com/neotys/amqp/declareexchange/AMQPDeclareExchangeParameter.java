@@ -25,7 +25,7 @@ enum AMQPDeclareExchangeParameter {
 	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "Name of the AMQP channel.", NON_EMPTY),
 	EXCHANGENAME("exchangeName", Required, True, TEXT, "myAMQPExchange", "Name of the AMQP exchange to declare.", NON_EMPTY),
 
-	TYPE("type", Optional, False, TEXT, "", "The type of the created exchange. Possible values are: \"direct\", \"fanout\", \"topic\" and \"header\". Default value is  \"direct\".", ALWAYS_VALID),
+	TYPE("type", Optional, False, TEXT, "", "The type of the created exchange. Possible values are: \"direct\", \"fanout\", \"topic\" and \"headers\". Default value is  \"direct\".", ALWAYS_VALID),
 	DURABLE("durable", Optional, False, TEXT, "", "If set to true, the created exchange will be durable. Default value is false.", BOOLEAN_VALIDATOR),
 	AUTODELETE("autoDelete", Optional, False, TEXT, "", "If set to true, the created exchange will be auto deleted if not used. Default value is false.", BOOLEAN_VALIDATOR),
 	ARGUMENTS("arguments", Optional, False, TEXT, "", "The arguments used to create the exchange. An argument must follow the pattern name=[class]value separated by '\\n'. Example : size=[java.lang.Integer]150. One line per argument.", ALWAYS_VALID);

@@ -90,11 +90,44 @@ Example:
 
 Status Codes:
 * NL-AMQP-CREATECHANNEL-ACTION-01: Invalid parameter.
-* NL-AMQP-CREATECHANNEL-ACTION-02: Issue creation channel. 
+* NL-AMQP-CREATECHANNEL-ACTION-02: Issue while creating channel. 
 
 ### Channel - Close
 
+This Advanced Action closes the AMQP channel.
+Parameters: 
+
+| Name                     | Description       |
+| ---------------          | ----------------- |
+| channelName | Name of the AMQP channel to close. |  
+
+Example: 
+<p align="center"><img src="/screenshots/close_channel.png" alt="Close Channel" /></p>
+
+Status Codes:
+* NL-AMQP-CLOSECHANNEL-ACTION-01: Invalid parameter.
+* NL-AMQP-CLOSECHANNEL-ACTION-02: Issue while closing channel. 
+
 ### Exchange - Declare
+
+This Advanced Action publishes a message on an AMQP channel.
+Parameters: 
+
+| Name                     | Description       |
+| ---------------          | ----------------- |
+| channelName | Name of the AMQP channel. |  
+| exchangeName | Name of the AMQP exchange to declare. |
+| type | The type of the created exchange. Possible values are: **direct**, **fanout**, **topic** and **headers**. Default value is  **direct**." |
+| durable | If set to true, the created exchange will be durable. Default value is false. |
+| autoDelete | If set to true, the created exchange will be auto deleted if not used. Default value is false. |
+| arguments | The arguments used to create the exchange. An argument must follow the pattern name=[class]value separated by '\\n'. Example : size=[java.lang.Integer]150. One line per argument. |
+
+Example: 
+<p align="center"><img src="/screenshots/exchange_declare.png" alt="Exchange Declare" /></p>
+
+Status Codes:
+* NL-AMQP-DECLARE-EXCHANGE-ACTION-01: Invalid parameter.
+* NL-AMQP-DECLARE-EXCHANGE-ACTION-02: Issue while declaring exchange. 
 
 ### Exchange - Publish 
 
