@@ -34,7 +34,7 @@ Parameters:
 | connectionName | Name of the AMQP connection to be refereced for further usage. |
 | hostname | AMQP server hostname or IP address. |  
 | port | AMQP server port. |
-| username | "Username to connect to the AMQP server. |
+| username | Username to connect to the AMQP server. |
 | password | Password to connect to the AMQP server. |
 | virtualHost | Virtual host. |
 | sslProtocol | SSL protocol to use, e.g. TLSv1, TLSv1.2 or keep value empty for default SSL protocol. |
@@ -51,6 +51,9 @@ Parameters:
 | disableNio | Enables or disables the Nio mode. Default is false, it is using Nio. Set to true to disable the Nio Mode.|
 | consumerThreadPoolSize | Size of the thread pool for the AMQP Consumer.|  
 
+Example: 
+<p align="center"><img src="/screenshots/connect.png" alt="Connect" /></p>
+
 Status Codes:
 * NL-AMQP-CONNECT-ACTION-01: Invalid parameter.
 * NL-AMQP-CONNECT-ACTION-02: Issue connecting to the AMQP server. 
@@ -65,11 +68,12 @@ Parameters:
 | connectionName | Name of the AMQP connection to disconnect. |
 | timeout | Set the shutdown timeout in milliseconds. |  
 
+Example: 
+<p align="center"><img src="/screenshots/disconnect.png" alt="Disconnect" /></p>
 
 Status Codes:
 * NL-AMQP-DISCONNECT-ACTION-01: Invalid parameter.
 * NL-AMQP-DISCONNECT-ACTION-02: Issue disconnecting from the AMQP server. 
-
 
 ### Channel - Create
 
