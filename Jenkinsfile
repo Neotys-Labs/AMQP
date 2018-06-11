@@ -4,6 +4,6 @@ startNlWebIndus(startMongo: false, disableSonar: true, sonarCloud: false)
 
 node('master') {
     stage('archive'){
-        archiveArtifacts '**/*.zip'
+        archiveArtifacts '**/*.jar'
     }
 }
