@@ -2,21 +2,30 @@ package com.neotys.amqp.connect;
 
 import static com.neotys.action.argument.Arguments.getArgumentLogString;
 import static com.neotys.action.argument.Arguments.parseArguments;
+import static com.neotys.amqp.connect.AMQPConnectParameter.CHANNELRPCTIMEOUT;
+import static com.neotys.amqp.connect.AMQPConnectParameter.CHANNELSHOULDCHECKRPCRESPONSETYPE;
 import static com.neotys.amqp.connect.AMQPConnectParameter.CONNECTIONNAME;
+import static com.neotys.amqp.connect.AMQPConnectParameter.CONNECTIONTIMEOUT;
+import static com.neotys.amqp.connect.AMQPConnectParameter.HANDSHAKETIMEOUT;
 import static com.neotys.amqp.connect.AMQPConnectParameter.HOSTNAME;
+import static com.neotys.amqp.connect.AMQPConnectParameter.NETWORKRECOVERYINTERVAL;
 import static com.neotys.amqp.connect.AMQPConnectParameter.PASSWORD;
 import static com.neotys.amqp.connect.AMQPConnectParameter.PORT;
+import static com.neotys.amqp.connect.AMQPConnectParameter.REQUESTEDCHANNELMAX;
+import static com.neotys.amqp.connect.AMQPConnectParameter.REQUESTEDFRAMEMAX;
+import static com.neotys.amqp.connect.AMQPConnectParameter.SHUTDOWNTIMEOUT;
 import static com.neotys.amqp.connect.AMQPConnectParameter.SSLPROTOCOL;
 import static com.neotys.amqp.connect.AMQPConnectParameter.USERNAME;
 import static com.neotys.amqp.connect.AMQPConnectParameter.VIRTUALHOST;
+import static com.neotys.amqp.connect.AMQPConnectParameter.WORKPOOLTIMEOUT;
 
 import java.io.File;
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.security.cert.X509Certificate;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -107,6 +116,17 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 					connectionFactory.useSslProtocol(sslContext);
 				}
 			}
+			getArgument(parsedArgs, REQUESTEDCHANNELMAX).map(Integer::parseInt).ifPresent(connectionFactory::setRequestedChannelMax);
+			getArgument(parsedArgs, REQUESTEDFRAMEMAX).map(Integer::parseInt).ifPresent(connectionFactory::setRequestedFrameMax);
+			getArgument(parsedArgs, CONNECTIONTIMEOUT).map(Integer::parseInt).ifPresent(connectionFactory::setConnectionTimeout);
+			getArgument(parsedArgs, HANDSHAKETIMEOUT).map(Integer::parseInt).ifPresent(connectionFactory::setHandshakeTimeout);
+			getArgument(parsedArgs, SHUTDOWNTIMEOUT).map(Integer::parseInt).ifPresent(connectionFactory::setShutdownTimeout);
+			getArgument(parsedArgs, SHUTDOWNTIMEOUT).map(Boolean::parseBoolean).ifPresent(connectionFactory::setTopologyRecoveryEnabled);
+			getArgument(parsedArgs, NETWORKRECOVERYINTERVAL).map(Long::parseLong).ifPresent(connectionFactory::setNetworkRecoveryInterval);
+			getArgument(parsedArgs, CHANNELSHOULDCHECKRPCRESPONSETYPE).map(Boolean::parseBoolean).ifPresent(connectionFactory::setChannelShouldCheckRpcResponseType);
+			getArgument(parsedArgs, WORKPOOLTIMEOUT).map(Integer::parseInt).ifPresent(connectionFactory::setWorkPoolTimeout);
+			getArgument(parsedArgs, CHANNELRPCTIMEOUT).map(Integer::parseInt).ifPresent(connectionFactory::setChannelRpcTimeout);
+			
 			AMQPActionEngine.setConnection(context, connectionName, connectionFactory.newConnection());
 		} catch (final Exception e) {
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONNECTION, "Cannot create connection to AMQP server.", e);
