@@ -44,7 +44,7 @@ public final class AMQPDeclareQueueEngine extends AMQPActionEngine {
 			final String queueName = declareQueue(context, channel, parsedArgs);
 			return newOkResult(context, request, "Queue " + queueName + " created");
 		} catch (final IOException exception) {
-			return newErrorResult(context, request, STATUS_CODE_ERROR_DECLARE_QUEUE, "Could not declare exchange: ", exception);
+			return newErrorResult(context, request, STATUS_CODE_ERROR_DECLARE_QUEUE, "Could not declare queue: ", exception);
 		}
 	}
 
