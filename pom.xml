@@ -99,8 +99,8 @@
 	</repositories>
 
 	<scm>
-		<connection>scm:git:http://git.intranet.neotys.com:8080/amqp</connection>
-		<url>http://git.intranet.neotys.com:8080/amqp</url>
+		<connection>scm:git:https://github.com/Neotys-Labs/AMQP.git</connection>
+		<url>https://github.com/Neotys-Labs/AMQP</url>
 	</scm>
 
 </project>
