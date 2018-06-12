@@ -16,8 +16,8 @@ import com.rabbitmq.client.Connection;
 
 public final class AMQPCreateChannelActionEngine extends AMQPActionEngine {
 
-	private static final String STATUS_CODE_INVALID_PARAMETER = "NL-AMQP-CREATECHANNEL-ACTION-01";
-	private static final String STATUS_CODE_ERROR_CHANNEL_CREATION = "NL-AMQP-CREATECHANNEL-ACTION-02";
+	private static final String STATUS_CODE_INVALID_PARAMETER = "NL-AMQP-CREATE-CHANNEL-ACTION-01";
+	private static final String STATUS_CODE_ERROR_CHANNEL_CREATION = "NL-AMQP-CREATE-CHANNEL-ACTION-02";
 
 	@Override
 	public SampleResult execute(final com.neotys.extensions.action.engine.Context context, final List<ActionParameter> parameters) {

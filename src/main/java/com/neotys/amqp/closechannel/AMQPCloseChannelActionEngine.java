@@ -15,8 +15,8 @@ import com.rabbitmq.client.Channel;
 
 public final class AMQPCloseChannelActionEngine extends AMQPActionEngine {
 
-	private static final String STATUS_CODE_INVALID_PARAMETER = "NL-AMQP-CLOSECHANNEL-ACTION-01";
-	private static final String STATUS_CODE_ERROR_CLOSECHANNEL = "NL-AMQP-CLOSECHANNEL-ACTION-02";	
+	private static final String STATUS_CODE_INVALID_PARAMETER = "NL-AMQP-CLOSE-CHANNEL-ACTION-01";
+	private static final String STATUS_CODE_ERROR_CLOSECHANNEL = "NL-AMQP-CLOSE-CHANNEL-ACTION-02";	
 
 	@Override
 	public SampleResult execute(final com.neotys.extensions.action.engine.Context context, final List<ActionParameter> parameters) {

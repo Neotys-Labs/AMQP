@@ -55,8 +55,8 @@ Example:
 <p align="center"><img src="/screenshots/connect.png" alt="Connect" /></p>
 
 Status Codes:
-* NL-AMQP-CONNECT-ACTION-01: Invalid parameter.
-* NL-AMQP-CONNECT-ACTION-02: Issue connecting to the AMQP server. 
+* **NL-AMQP-CONNECT-ACTION-01**: Invalid parameter.
+* **NL-AMQP-CONNECT-ACTION-02**: Issue connecting to the AMQP server. 
 
 ### Disconnect
 
@@ -72,8 +72,8 @@ Example:
 <p align="center"><img src="/screenshots/disconnect.png" alt="Disconnect" /></p>
 
 Status Codes:
-* NL-AMQP-DISCONNECT-ACTION-01: Invalid parameter.
-* NL-AMQP-DISCONNECT-ACTION-02: Issue disconnecting from the AMQP server. 
+* **NL-AMQP-DISCONNECT-ACTION-01**: Invalid parameter.
+* **NL-AMQP-DISCONNECT-ACTION-02**: Issue disconnecting from the AMQP server. 
 
 ### Channel - Create
 
@@ -89,8 +89,8 @@ Example:
 <p align="center"><img src="/screenshots/create_channel.png" alt="Create Channel" /></p>
 
 Status Codes:
-* NL-AMQP-CREATECHANNEL-ACTION-01: Invalid parameter.
-* NL-AMQP-CREATECHANNEL-ACTION-02: Issue while creating channel. 
+* **NL-AMQP-CREATE-CHANNEL-ACTION-01**: Invalid parameter.
+* **NL-AMQP-CREATE-CHANNEL-ACTION-02**: Issue while creating channel. 
 
 ### Channel - Close
 
@@ -105,8 +105,8 @@ Example:
 <p align="center"><img src="/screenshots/close_channel.png" alt="Close Channel" /></p>
 
 Status Codes:
-* NL-AMQP-CLOSECHANNEL-ACTION-01: Invalid parameter.
-* NL-AMQP-CLOSECHANNEL-ACTION-02: Issue while closing channel. 
+* **NL-AMQP-CLOSE-CHANNEL-ACTION-01**: Invalid parameter.
+* **NL-AMQP-CLOSE-CHANNEL-ACTION-02**: Issue while closing channel. 
 
 ### Exchange - Declare
 
@@ -126,8 +126,8 @@ Example:
 <p align="center"><img src="/screenshots/exchange_declare.png" alt="Exchange Declare" /></p>
 
 Status Codes:
-* NL-AMQP-DECLARE-EXCHANGE-ACTION-01: Invalid parameter.
-* NL-AMQP-DECLARE-EXCHANGE-ACTION-02: Issue while declaring exchange. 
+* **NL-AMQP-DECLARE-EXCHANGE-ACTION-01**: Invalid parameter.
+* **NL-AMQP-DECLARE-EXCHANGE-ACTION-02**: Issue while declaring exchange. 
 
 ### Exchange - Publish 
 
@@ -158,11 +158,11 @@ Parameters:
 | clusterId | The message cluster ID. |
 
 Example: 
-<p align="center"><img src="/screenshots/excvhange_publish.png" alt="Exchange Publish" /></p>
+<p align="center"><img src="/screenshots/exchange_publish.png" alt="Exchange Publish" /></p>
 
 Status Codes:
-* NL-AMQP-PUBLISH-ACTION-01: Invalid parameter.
-* NL-AMQP-PUBLISH-ACTION-02: Issue while publishing on channel. 
+* **NL-AMQP-PUBLISH-ACTION-01**: Invalid parameter.
+* **NL-AMQP-PUBLISH-ACTION-02**: Issue while publishing on channel. 
 
 ### Exchange - Delete
 
@@ -178,8 +178,8 @@ Example:
 <p align="center"><img src="/screenshots/delete_exchange.png" alt="Exchange Delete" /></p>
 
 Status Codes:
-* NL-AMQP-DELETE-EXCHANGE-ACTION-01: Invalid parameter.
-* NL-AMQP-DELETE-EXCHANGE-ACTION-02: Issue while deleting exchange. 
+* **NL-AMQP-DELETE-EXCHANGE-ACTION-01**: Invalid parameter.
+* **NL-AMQP-DELETE-EXCHANGE-ACTION-02**: Issue while deleting exchange. 
 
 ### Queue - Declare
 
@@ -201,8 +201,8 @@ Example:
 <p align="center"><img src="/screenshots/queue_declare.png" alt="Queue Declare" /></p>
 
 Status Codes:
-* NL-AMQP-DECLARE-QUEUE-ACTION-01: Invalid parameter.
-* NL-AMQP-DECLARE-QUEUE-ACTION-02: Issue while declaring queue.
+* **NL-AMQP-DECLARE-QUEUE-ACTION-01**: Invalid parameter.
+* **NL-AMQP-DECLARE-QUEUE-ACTION-02**: Issue while declaring queue.
 
 ### Queue - Consume
 
@@ -221,8 +221,8 @@ Example:
 <p align="center"><img src="/screenshots/queue_consume.png" alt="Queue Consume" /></p>
 
 Status Codes:
-* NL-AMQP-CONSUME-ACTION-01: Invalid parameter.
-* NL-AMQP-CONSUME-ACTION-02: Issue while
+* **NL-AMQP-CONSUME-ACTION-01**: Invalid parameter.
+* **NL-AMQP-CONSUME-ACTION-02**: Issue while
 
 ### Queue - Delete
 
@@ -238,19 +238,19 @@ Example:
 <p align="center"><img src="/screenshots/queue-delete.png" alt="Queue Delete" /></p>
 
 Status Codes:
-* NL-AMQP-DELETE-QUEUE-ACTION-01: Invalid parameter.
-* NL-AMQP-DELETE-QUEUE-ACTION-02: Issue while deleting a queue.
+* **NL-AMQP-DELETE-QUEUE-ACTION-01**: Invalid parameter.
+* **NL-AMQP-DELETE-QUEUE-ACTION-02**: Issue while deleting a queue.
 
 ## User Path examples
 
 ### Simple Publish
 
-The following User Path establish a connection and create a channel in the "Init" section. In the "Actions" section, a message is published on an already declared exchange. Finally in the "End" section, the channel is closed and the connection is closed. 
+The following User Path establishes a connection and creates an channel in the **Init** section. In the **Actions** section, a message is published on an already declared exchange. Finally in the **End** section, the channel is closed and the connection is closed. 
 <p align="center"><img src="/screenshots/simple-publish.png" alt="Publish" /></p>
 
 ### Publish and then Consume
 
-The following User Path establish a connection, create a channel, create an exchange and create a queue in the "Init" section. In the "Actions" section, a message is published and a response is consumed. Finally in the "End" section, the queue and the exchange are deleted the channel is closed and the connection is closed.
+The following User Path establishes a connection, creates a channel, creates an exchange and creates a queue in the **Init** section. In the **Actions** section, a message is published and a response is consumed. Finally in the **End** section, the queue and the exchange are deleted, the channel is closed and the connection is closed.
 <p align="center"><img src="/screenshots/publish-and-consume.png" alt="Publish and Consume" /></p>
 
 ## TLS Support (AMQPS) 
