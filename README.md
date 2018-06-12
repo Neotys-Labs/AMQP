@@ -13,7 +13,7 @@ This repository contains NeoLoad Advanced Actions that allows performance tester
 | Support            | Supported by Neotys      |
 | Author             | Neotys |
 | License            | [BSD Simplified](https://www.neotys.com/documents/legal/bsd-neotys.txt) |
-| NeoLoad            | 6.6 (Enterprise or Professional Edition w/ Integration & Advanced Usage)|
+| NeoLoad            | 6.5.1 (Enterprise or Professional Edition w/ Integration & Advanced Usage)|
 | Bundled in NeoLoad | No |
 | Download Binaries  | See the [latest release](https://github.com/Neotys-Labs/AMQP/releases/latest)
 
@@ -166,11 +166,80 @@ Status Codes:
 
 ### Exchange - Delete
 
+This Advanced Action deletes an exchange on an AMQP channel.
+Parameters: 
+
+| Name                     | Description       |
+| ---------------          | ----------------- |
+| channelName | Name of the AMQP channel. |
+| exchangeName | Name of the AMQP exchange to declare. |    
+
+Example: 
+<p align="center"><img src="/screenshots/delete_exchange.png" alt="Exchange Delete" /></p>
+
+Status Codes:
+* NL-AMQP-DELETE-EXCHANGE-ACTION-01: Invalid parameter.
+* NL-AMQP-DELETE-EXCHANGE-ACTION-02: Issue while deleting exchange. 
+
 ### Queue - Declare
+
+This Advanced Action declares a Queue on an AMQP channel.
+Parameters: 
+
+| Name                     | Description       |
+| ---------------          | ----------------- |
+| channelName | Name of the AMQP channel. |
+| queueName | Name of the AMQP queue to declare. If not provided, a queue with a generated name will be created. |
+| exchangeName | Name of the AMQP exchange where the queue will be bind. |
+| routingKey | AMQP routing key where the queue will be bind. |
+| durable | If set to true, the created queue will be durable. Default value is false. |
+| exclusive | If set to true, the created queue will be exclusive. Default value is false. |
+| autoDelete | "If set to true, the created queue will be auto deleted if not used. Default value is true. |
+| arguments | The arguments used to create the queue. An argument must follow the pattern name=[class]value separated by '\\n'. Example : size=[java.lang.Integer]150. One line per argument. |
+
+Example: 
+<p align="center"><img src="/screenshots/queue_declare.png" alt="Queue Declare" /></p>
+
+Status Codes:
+* NL-AMQP-DECLARE-QUEUE-ACTION-01: Invalid parameter.
+* NL-AMQP-DECLARE-QUEUE-ACTION-02: Issue while declaring queue.
 
 ### Queue - Consume
 
+This Advanced Action consumes a message on an AMQP channel.
+Parameters: 
+
+| Name                     | Description       |
+| ---------------          | ----------------- |
+| channelName | Name of the AMQP channel. |
+| queueName | Name of AMQP queue where the message will be consumed. |
+| timeout | Timeout (in ms) applied to wait a message. 0=none. |
+| failOnTimeout | If set to true, the action fails when timeout is reached. |
+| autoAck | If set to true, the server will consider messages acknowledged once delivered. Default value is false. |
+
+Example: 
+<p align="center"><img src="/screenshots/queue_consume.png" alt="Queue Consume" /></p>
+
+Status Codes:
+* NL-AMQP-CONSUME-ACTION-01: Invalid parameter.
+* NL-AMQP-CONSUME-ACTION-02: Issue while
+
 ### Queue - Delete
+
+This Advanced Action deletes a Queue on an AMQP channel.
+Parameters: 
+
+| Name                     | Description       |
+| ---------------          | ----------------- |
+| channelName | Name of the AMQP channel. |
+| queueName | Name of the AMQP queue to delete. |
+
+Example: 
+<p align="center"><img src="/screenshots/queue-delete.png" alt="Queue Delete" /></p>
+
+Status Codes:
+* NL-AMQP-DELETE-QUEUE-ACTION-01: Invalid parameter.
+* NL-AMQP-DELETE-QUEUE-ACTION-02: Issue while deleting a queue.
 
 ## User Path examples
 
@@ -183,3 +252,22 @@ The following User Path establish a connection and create a channel in the "Init
 
 The following User Path establish a connection, create a channel, create an exchange and create a queue in the "Init" section. In the "Actions" section, a message is published and a response is consumed. Finally in the "End" section, the queue and the exchange are deleted the channel is closed and the connection is closed.
 <p align="center"><img src="/screenshots/publish-and-consume.png" alt="Publish and Consume" /></p>
+
+## TLS Support (AMQPS) 
+
+The Connect advanced action support TLS (AMQPS protocol) to encrypt the communication between the client and the AMQP broker. 
+
+To enable TLS on the Connect advanced action, add parameter **sslProtocol** with the SSL protocol you want to use (for example **TLSv1**, **TLSv1.2** or keep value empty for default SSL protocol.
+
+<p align="center"><img src="/screenshots/sslprotocol.png" alt="SSL protocol" /></p>
+
+Client and server authentication (a.k.a. peer verification) is also supported. The Connect advanced action can exchange signed certificates between the end points of the channel, and those certificates can optionally be verified. The verification of a certificate requires establishing a chain of trust from a known, trusted root certificate, and the certificate presented. 
+
+To use a X509 client certificate to negotiate the TLS communication, import the certificate in PKCS#12 format in the certificate manager of the NeoLoad project settings. See [NeoLoad documentation](https://www.neotys.com/documents/doc/neoload/latest/en/html/#699.htm) for more details.
+
+<p align="center"><img src="/screenshots/certificate-manager.png" alt="Certificate manager" /></p>
+
+
+
+
+
