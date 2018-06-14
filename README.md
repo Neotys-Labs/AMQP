@@ -5,7 +5,7 @@ The [Advanced Message Queuing Protocol (AMQP)](https://www.amqp.org/) is an open
 
 ## Overview
 
-This repository contains NeoLoad Advanced Actions that allows performance testers using NeoLoad to send messages using AMQP or AMQPS protocol.
+This repository contains NeoLoad Advanced Actions that allows performance testers using NeoLoad to send messages using AMQP or AMQPS protocol version 0-9-1, 0-9 and 0-8, and extensions (AMQP 1.0 is not supported).
 
 | Property           | Value             |
 | ----------------   | ----------------  |
