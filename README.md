@@ -142,7 +142,7 @@ Parameters:
 | textContent | The message content. |
 | contentFile.path | The path of the content file. Use the variable **${NL-CustomResources}** to access on the Load Generator the synchronized resources located in the **custom-resources** folder of the project. |
 | contentFile.charset | The charset of the file. |
-| parseFile | Whether to parse the file to replace variables. Default value is false. |
+| parseFile | Whether or not to parse the file to replace variables. Default value is false. |
 | contentType | The message content type. |
 | contentEncoding | The message content encoding. |
 | headers | You can setup the name, the value and the class (type) of a header. Default type is String. The header must follow the pattern name=[class]value separated by '\\n'. Example : size=[java.lang.Integer]150. One line per header. |
@@ -151,7 +151,7 @@ Parameters:
 | replyTo | The message queue to reply to. |
 | expiration | The message expiration. |
 | messageId | The message ID. |
-| timestamp | The message timestamp as a long specifying the number of milliseconds since the standard base time known as the epoch. |
+| timestamp | The message timestamp (with type Long), specifying the number of milliseconds since the standard base time known as the epoch. |
 | type | The message type. |
 | userId | The message user ID. |
 | appId | The message app ID. |
@@ -222,7 +222,7 @@ Example:
 
 Status Codes:
 * **NL-AMQP-CONSUME-ACTION-01**: Invalid parameter.
-* **NL-AMQP-CONSUME-ACTION-02**: Issue while
+* **NL-AMQP-CONSUME-ACTION-02**: Issue while consuming on channel.
 
 ### Queue - Delete
 
