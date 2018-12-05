@@ -27,7 +27,7 @@ enum AMQPDeclareQueueParameter {
 
 	QUEUENAME("queueName", Optional, True, TEXT, "myAMQPQueue", "Name of the AMQP queue to declare. If not provided, a queue with a generated name will be created.", ALWAYS_VALID),
 	EXCHANGENAME("exchangeName", Required, True, TEXT, "myAMQPExchange", "Name of the AMQP exchange where the queue will be bind.", NON_EMPTY),
-	ROUTINGKEY("routingKey", Required, True, TEXT, "my.routing.key", "AMQP routing key where the queue will be bind.", NON_EMPTY),
+	ROUTINGKEY("routingKey", Optional, True, TEXT, "my.routing.key", "AMQP routing key where the queue will be bind.", ALWAYS_VALID),
 
 	DURABLE("durable", Optional, False, TEXT, "", "If set to true, the created queue will be durable. Default value is false.", BOOLEAN_VALIDATOR),
 	EXCLUSIVE("exclusive", Optional, False, TEXT, "", "If set to true, the created queue will be exclusive. Default value is false.", BOOLEAN_VALIDATOR),

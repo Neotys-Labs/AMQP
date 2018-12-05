@@ -24,7 +24,7 @@ enum AMQPPublishParameter {
 
 	CHANNELNAME("channelName", Required, True, TEXT, "myAMQPChannel", "Name of the AMQP channel.", NON_EMPTY),
 	EXCHANGE("exchangeName", Required, True, TEXT, "myAMQPExchange", "Name of the AMQP exchange where the message will be published.", NON_EMPTY),
-	ROUTINGKEY("routingKey", Required, True, TEXT, "my.routing.key", "AMQP routing key.", NON_EMPTY),
+	ROUTINGKEY("routingKey", Optional, True, TEXT, "", "AMQP routing key.", ALWAYS_VALID),
 
 	TEXTCONTENT("textContent", Optional, True, TEXT, "", "The message content.", ALWAYS_VALID),
 	FILEPATH("contentFile.path", Optional, True, TEXT, "", "The path of the content file. Use the variable \'${NL-CustomResources}\' to access on the Load Generator the synchronized resources located in the \'custom-resources\' folder of the project..", ALWAYS_VALID),
