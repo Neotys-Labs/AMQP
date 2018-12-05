@@ -53,7 +53,7 @@ public final class AMQPDeclareQueueEngine extends AMQPActionEngine {
 	private String declareQueue(final Context context, final Channel channel, final Map<String, Optional<String>> parsedArgs) throws IOException {
 		final Optional<String> queueNameOptional = parsedArgs.get(AMQPDeclareQueueParameter.QUEUENAME.getOption().getName());
 		final String exchangeName = parsedArgs.get(AMQPDeclareQueueParameter.EXCHANGENAME.getOption().getName()).get();
-		final String rountingKey = parsedArgs.get(AMQPDeclareQueueParameter.ROUTINGKEY.getOption().getName()).get();
+		final String rountingKey = parsedArgs.get(AMQPDeclareQueueParameter.ROUTINGKEY.getOption().getName()).or("");
 		final String queueName;
 		if (queueNameOptional.isPresent()) {
 			context.getLogger().debug("Declaring queue: " + queueNameOptional.get());

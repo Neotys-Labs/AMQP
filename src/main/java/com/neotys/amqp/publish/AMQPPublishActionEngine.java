@@ -49,7 +49,7 @@ public final class AMQPPublishActionEngine extends AMQPActionEngine {
 		}
 
 		final String exchange = parsedArgs.get(AMQPPublishParameter.EXCHANGE.getOption().getName()).get();
-		final String routingKey = parsedArgs.get(AMQPPublishParameter.ROUTINGKEY.getOption().getName()).get();
+		final String routingKey = parsedArgs.get(AMQPPublishParameter.ROUTINGKEY.getOption().getName()).or("");
 
 		final AMQP.BasicProperties properties = getProperties(logger, parsedArgs);
 
