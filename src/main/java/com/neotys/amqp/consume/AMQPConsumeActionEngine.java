@@ -81,7 +81,8 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 		final SettableFuture<AMQPMessage> messageFuture = SettableFuture.create();
 		context.getLogger().debug("Consuming message on queue: " + queueName);
 		final long startTime = System.currentTimeMillis();
-		channel.basicConsume(queueName, autoAck, "",
+
+		final String tag = channel.basicConsume(queueName, autoAck, "",
 				new DefaultConsumer(channel) {
 					@Override
 					public void handleDelivery(final String consumerTag,
@@ -97,6 +98,9 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 				});
 		final AMQPMessage message = timeout == 0 ? messageFuture.get() : messageFuture.get(timeout, TimeUnit.MILLISECONDS);
 		final long endTime = System.currentTimeMillis();
+		// we cancel the consumer after receiving the message, if we don't cancel, this consumer will still receive the messages.
+		channel.basicCancel(tag);
+
 		if (context.getLogger().isDebugEnabled()) {
 			context.getLogger().debug("Message received: " + message.toString());
 		}
