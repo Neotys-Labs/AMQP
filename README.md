@@ -138,7 +138,7 @@ Parameters:
 | ---------------          | ----------------- |
 | channelName | Name of the AMQP channel. |  
 | exchangeName | Name of the AMQP exchange where the message will be published. |  
-| routingKey | AMQP routing key. |
+| routingKey | AMQP routing key (optional). |
 | textContent | The message content. |
 | contentFile.path | The path of the content file. Use the variable **${NL-CustomResources}** to access on the Load Generator the synchronized resources located in the **custom-resources** folder of the project. |
 | contentFile.charset | The charset of the file. |
@@ -191,7 +191,7 @@ Parameters:
 | channelName | Name of the AMQP channel. |
 | queueName | Name of the AMQP queue to declare. If not provided, a queue with a generated name will be created. |
 | exchangeName | Name of the AMQP exchange where the queue will be bind. |
-| routingKey | AMQP routing key where the queue will be bind. |
+| routingKey | AMQP routing key where the queue will be bind (optional). |
 | durable | If set to true, the created queue will be durable. Default value is false. |
 | exclusive | If set to true, the created queue will be exclusive. Default value is false. |
 | autoDelete | "If set to true, the created queue will be auto deleted if not used. Default value is true. |
