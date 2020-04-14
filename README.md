@@ -14,7 +14,7 @@ This repository contains NeoLoad Advanced Actions that allows performance tester
 | Author             | Neotys |
 | License            | [BSD Simplified](https://www.neotys.com/documents/legal/bsd-neotys.txt) |
 | NeoLoad            | 6.5.1 (Enterprise or Professional Edition w/ Integration & Advanced Usage)|
-| Bundled in NeoLoad | No |
+| Bundled in NeoLoad | Yes |
 | Download Binaries  | See the [latest release](https://github.com/Neotys-Labs/AMQP/releases/latest)
 
 ## Installation
