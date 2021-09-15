@@ -12,6 +12,7 @@ import com.neotys.amqp.common.AMQPActionEngine;
 import com.neotys.extensions.action.ActionParameter;
 import com.neotys.extensions.action.engine.Logger;
 import com.neotys.extensions.action.engine.SampleResult;
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
 public final class AMQPCreateChannelActionEngine extends AMQPActionEngine {
@@ -48,7 +49,10 @@ public final class AMQPCreateChannelActionEngine extends AMQPActionEngine {
 							
 		try {
 			final long startTime = System.currentTimeMillis();
-			AMQPActionEngine.setChannel(context, channelName, connection.createChannel());
+			final Channel channel = connection.createChannel();
+			// Force to consume only one message at a time
+			channel.basicQos(1);
+			AMQPActionEngine.setChannel(context, channelName, channel);
 			final long endTime = System.currentTimeMillis();
 			return newOkResult(context, request, "Channel created on AMQP connection.", endTime - startTime);
 		} catch (final Exception e) {

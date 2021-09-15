@@ -81,7 +81,6 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 		final SettableFuture<AMQPMessage> messageFuture = SettableFuture.create();
 		context.getLogger().debug("Consuming message on queue: " + queueName);
 		final long startTime = System.currentTimeMillis();
-
 		final String tag = channel.basicConsume(queueName, autoAck, "",
 				new DefaultConsumer(channel) {
 					@Override
@@ -89,6 +88,8 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 											   final Envelope envelope,
 											   final AMQP.BasicProperties properties,
 											   final byte[] body) throws IOException {
+						// consume only one message
+						channel.basicCancel(consumerTag);
 						messageFuture.set(new AMQPMessage(consumerTag, envelope, properties, new String(body)));
 
 						if (!autoAck) {
@@ -96,19 +97,22 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 						}
 					}
 				});
-		final AMQPMessage message = timeout == 0 ? messageFuture.get() : messageFuture.get(timeout, TimeUnit.MILLISECONDS);
-		final long endTime = System.currentTimeMillis();
-		// we cancel the consumer after receiving the message, if we don't cancel, this consumer will still receive the messages.
-		channel.basicCancel(tag);
-
-		if (context.getLogger().isDebugEnabled()) {
-			context.getLogger().debug("Message received: " + message.toString());
+		try {
+			final AMQPMessage message = timeout == 0 ? messageFuture.get() : messageFuture.get(timeout, TimeUnit.MILLISECONDS);
+			final long endTime = System.currentTimeMillis();
+			if (context.getLogger().isDebugEnabled()) {
+				context.getLogger().debug("Message received: " + message.toString());
+			}
+			final StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("Message received:\n");
+			message.appendToStringBuilder(stringBuilder);
+			stringBuilder.append("\n");
+			return newOkResult(context, request, stringBuilder.toString(), endTime - startTime);
+		} catch (final TimeoutException timeoutException){
+			// we cancel the consumer on timeout
+			channel.basicCancel(tag);
+			throw timeoutException;
 		}
-		final StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("Message received:\n");
-		message.appendToStringBuilder(stringBuilder);
-		stringBuilder.append("\n");
-		return newOkResult(context, request, stringBuilder.toString(), endTime - startTime);
 	}
 
 	/**
