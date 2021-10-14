@@ -28,7 +28,7 @@ enum AMQPConsumeParameter {
 	TIMEOUT("timeout", Optional, True, TEXT, "2000", "Timeout (in ms) applied to wait a message. 0=none.", POSITIVE_LONG_VALIDATOR),
 	FAILONTIMEOUT("failOnTimeout", Optional, False, TEXT, "true", "If set to true, the action fails when timeout is reached.", BOOLEAN_VALIDATOR),
 	AUTOACK("autoAck", Optional, False, TEXT, "false", "If set to true, the server will consider messages acknowledged once delivered.", BOOLEAN_VALIDATOR),
-	NACK("negativeAck", Optional, False, TEXT, "false", "If set to true, the received message will be rejected with negative ack.", BOOLEAN_VALIDATOR),
+	NACK("negativeAck", Optional, False, TEXT, "false", "If set to true, the received message will be rejected with a negative ack.", BOOLEAN_VALIDATOR),
 	REQUEUE("requeue", Optional, False, TEXT, "false", "If set to true, the rejected message will be requeued.", BOOLEAN_VALIDATOR);
 
 	private final AMQPParameterOption option;
