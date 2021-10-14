@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.neotys.amqp</groupId>
 	<artifactId>neotys-advanced-action-amqp</artifactId>
-	<version>1.0.5-SNAPSHOT</version>	
+	<version>1.0.5</version>	
 	
 	<properties>
 		<!--<neoload.installation.folder>C:/Program Files/NeoLoad 6.5</neoload.installation.folder>-->
