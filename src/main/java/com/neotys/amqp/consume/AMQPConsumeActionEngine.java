@@ -53,9 +53,11 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 		final String queueName = parsedArgs.get(AMQPConsumeParameter.QUEUENAME.getOption().getName()).get();
 		final long timeout = getTimeout(parsedArgs);
 		final boolean autoAck = getBooleanValue(parsedArgs, AMQPConsumeParameter.AUTOACK.getOption(), false);
+		final boolean nack = getBooleanValue(parsedArgs, AMQPConsumeParameter.NACK.getOption(), false);
+		final boolean requeue = getBooleanValue(parsedArgs, AMQPConsumeParameter.REQUEUE.getOption(), false);
 
 		try {
-			return doConsume(context, request, channel, queueName, timeout, autoAck);
+			return doConsume(context, request, channel, queueName, timeout, autoAck, nack, requeue);
 		} catch (final InterruptedException exception){
 			Thread.currentThread().interrupt();
 			return newErrorResult(context, request, STATUS_CODE_ERROR_CONSUME, "Could not consume: ", exception);
@@ -77,7 +79,9 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 								   final Channel channel,
 								   final String queueName,
 								   final long timeout,
-								   final boolean autoAck) throws IOException, InterruptedException, ExecutionException, TimeoutException {
+								   final boolean autoAck,
+	                               final boolean nack,
+	                               final boolean requeue) throws IOException, InterruptedException, ExecutionException, TimeoutException {
 		final SettableFuture<AMQPMessage> messageFuture = SettableFuture.create();
 		context.getLogger().debug("Consuming message on queue: " + queueName);
 		final long startTime = System.currentTimeMillis();
@@ -92,7 +96,9 @@ public final class AMQPConsumeActionEngine extends AMQPActionEngine {
 						channel.basicCancel(consumerTag);
 						messageFuture.set(new AMQPMessage(consumerTag, envelope, properties, new String(body)));
 
-						if (!autoAck) {
+						if(nack){
+							channel.basicNack(envelope.getDeliveryTag(), false, requeue);
+						} else if (!autoAck) {
 							channel.basicAck(envelope.getDeliveryTag(), false);
 						}
 					}
