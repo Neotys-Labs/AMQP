@@ -2,24 +2,7 @@ package com.neotys.amqp.connect;
 
 import static com.neotys.action.argument.Arguments.getArgumentLogString;
 import static com.neotys.action.argument.Arguments.parseArguments;
-import static com.neotys.amqp.connect.AMQPConnectParameter.CHANNELRPCTIMEOUT;
-import static com.neotys.amqp.connect.AMQPConnectParameter.CHANNELSHOULDCHECKRPCRESPONSETYPE;
-import static com.neotys.amqp.connect.AMQPConnectParameter.CONNECTIONNAME;
-import static com.neotys.amqp.connect.AMQPConnectParameter.CONNECTIONTIMEOUT;
-import static com.neotys.amqp.connect.AMQPConnectParameter.CONSUMERTHREADPOOLSIZE;
-import static com.neotys.amqp.connect.AMQPConnectParameter.DISABLENIO;
-import static com.neotys.amqp.connect.AMQPConnectParameter.HANDSHAKETIMEOUT;
-import static com.neotys.amqp.connect.AMQPConnectParameter.HOSTNAME;
-import static com.neotys.amqp.connect.AMQPConnectParameter.NETWORKRECOVERYINTERVAL;
-import static com.neotys.amqp.connect.AMQPConnectParameter.PASSWORD;
-import static com.neotys.amqp.connect.AMQPConnectParameter.PORT;
-import static com.neotys.amqp.connect.AMQPConnectParameter.REQUESTEDCHANNELMAX;
-import static com.neotys.amqp.connect.AMQPConnectParameter.REQUESTEDFRAMEMAX;
-import static com.neotys.amqp.connect.AMQPConnectParameter.SHUTDOWNTIMEOUT;
-import static com.neotys.amqp.connect.AMQPConnectParameter.SSLPROTOCOL;
-import static com.neotys.amqp.connect.AMQPConnectParameter.USERNAME;
-import static com.neotys.amqp.connect.AMQPConnectParameter.VIRTUALHOST;
-import static com.neotys.amqp.connect.AMQPConnectParameter.WORKPOOLTIMEOUT;
+import static com.neotys.amqp.connect.AMQPConnectParameter.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -34,6 +17,7 @@ import java.util.concurrent.Executors;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import com.neotys.amqp.common.AMQPActionEngine;
@@ -98,25 +82,33 @@ public final class AMQPConnectActionEngine extends AMQPActionEngine {
 					final KeyManagerFactory kmf = KeyManagerFactory.getInstance(NEOLOAD_CERTIFICATE_ALGORITHM);
 					kmf.init(keystore, certificatePassword);
 					final SSLContext sslContext = SSLContext.getInstance(sslProtocolValue);
-					final TrustManager[] trustAllCerts = new TrustManager[] {
-							new X509TrustManager() {
-								@Override
-								public X509Certificate[] getAcceptedIssuers() {
-									return new X509Certificate[0];
+					final boolean trustAll = getArgument(parsedArgs, SSLTRUSTALL).map(Boolean::parseBoolean).orElse(false);
+					final TrustManager[] trustManagers;
+					if (trustAll) {
+						trustManagers = new TrustManager[]{
+								new X509TrustManager() {
+									@Override
+									public X509Certificate[] getAcceptedIssuers() {
+										return new X509Certificate[0];
+									}
+
+									@Override
+									@SuppressWarnings("squid:S4424")
+									public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+										// Trust all client certificates
+									}
+
+									@Override
+									@SuppressWarnings("squid:S4424")
+									public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+										// Trust all server certificates
+									}
 								}
-								@Override
-								@SuppressWarnings("squid:S4424")
-								public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-									// Trust all client certificates
-								}
-								@Override
-								@SuppressWarnings("squid:S4424")
-								public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-									// Trust all server certificates
-								}
-							}
-					};
-					sslContext.init(kmf.getKeyManagers(), trustAllCerts, new java.security.SecureRandom());
+						};
+					} else {
+						trustManagers = TrustManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).getTrustManagers();
+					}
+					sslContext.init(kmf.getKeyManagers(), trustManagers, new java.security.SecureRandom());
 					connectionFactory.useSslProtocol(sslContext);
 				}
 			}

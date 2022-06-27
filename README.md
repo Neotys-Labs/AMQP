@@ -7,15 +7,15 @@ The [Advanced Message Queuing Protocol (AMQP)](https://www.amqp.org/) is an open
 
 This repository contains NeoLoad Advanced Actions that allows performance testers using NeoLoad to send messages using AMQP or AMQPS protocol version 0-9-1, 0-9 and 0-8, and extensions (AMQP 1.0 is not supported).
 
-| Property           | Value             |
-| ----------------   | ----------------  |
-| Maturity           | Experimental      |
-| Support            | Supported by Neotys      |
-| Author             | Neotys |
-| License            | [BSD Simplified](https://www.neotys.com/documents/legal/bsd-neotys.txt) |
-| NeoLoad            | 6.5.1 (Enterprise or Professional Edition w/ Integration & Advanced Usage)|
-| Bundled in NeoLoad | Yes |
-| Download Binaries  | See the [latest release](https://github.com/Neotys-Labs/AMQP/releases/latest)
+| Property           | Value                                                                         |
+|--------------------|-------------------------------------------------------------------------------|
+| Maturity           | Experimental                                                                  |
+| Support            | Supported by Neotys                                                           |
+| Author             | Neotys                                                                        |
+| License            | [BSD Simplified](https://www.neotys.com/documents/legal/bsd-neotys.txt)       |
+| NeoLoad            | 6.5.1 (Enterprise or Professional Edition w/ Integration & Advanced Usage)    |
+| Bundled in NeoLoad | Yes                                                                           |
+| Download Binaries  | See the [latest release](https://github.com/Neotys-Labs/AMQP/releases/latest) |
 
 ## Installation
 
@@ -29,27 +29,28 @@ This repository contains NeoLoad Advanced Actions that allows performance tester
 This Advanced Action establishes a connection to a AMQP server. 
 Parameters: 
 
-| Name                     | Description       |
-| ---------------          | ----------------- |
-| connectionName | Name of the AMQP connection to be refereced for further usage. |
-| hostname | AMQP server hostname or IP address. |  
-| port | AMQP server port. |
-| username | Username to connect to the AMQP server. |
-| password | Password to connect to the AMQP server. |
-| virtualHost | Virtual host. |
-| sslProtocol | SSL protocol to use, e.g. TLSv1, TLSv1.2 or keep value empty for default SSL protocol. |
-| requestedChannelMax | Maximum channel number to ask for. |
-| requestedFrameMax | Frame-max parameter to ask for (in bytes). |
-| connectionTimeout | Timeout setting for connection attempts (in milliseconds). |
-| handshakeTimeout | Set the AMQP0-9-1 protocol handshake timeout. |
-| shutdownTimeout | Set the shutdown timeout in milliseconds. |
-| topologyRecoveryEnabled | Enables or disables topology recovery (true or false)." |
-| networkRecoveryInterval | Sets connection recovery interval (milliseconds). |
+| Name                              | Description       |
+|-----------------------------------| ----------------- |
+| connectionName                    | Name of the AMQP connection to be refereced for further usage. |
+| hostname                          | AMQP server hostname or IP address. |  
+| port                              | AMQP server port. |
+| username                          | Username to connect to the AMQP server. |
+| password                          | Password to connect to the AMQP server. |
+| virtualHost                       | Virtual host. |
+| sslProtocol                       | SSL protocol to use, e.g. TLSv1, TLSv1.2 or keep value empty for default SSL protocol. |
+| sslTrustAll                       | Enables or disables trusting all certificates without validation (true or false). |
+| requestedChannelMax               | Maximum channel number to ask for. |
+| requestedFrameMax                 | Frame-max parameter to ask for (in bytes). |
+| connectionTimeout                 | Timeout setting for connection attempts (in milliseconds). |
+| handshakeTimeout                  | Set the AMQP0-9-1 protocol handshake timeout. |
+| shutdownTimeout                   | Set the shutdown timeout in milliseconds. |
+| topologyRecoveryEnabled           | Enables or disables topology recovery (true or false)." |
+| networkRecoveryInterval           | Sets connection recovery interval (milliseconds). |
 | channelShouldCheckRpcResponseType | Define if the AMQP channel should check the RPC response type or not (true or false). |
-| workPoolTimeout | Timeout in milliseconds for work pool enqueueing. The WorkPool dispatches several types of responses from the broker (e.g. deliveries). A high-traffic client with slow consumers can exhaust the work pool and compromise the whole connection (by e.g. letting the broker saturate the receive TCP buffers). Setting a timeout would make the connection fail early and avoid hard-to-diagnose TCP connection failure. Note this shouldn't happen with clients that set appropriate QoS values.|
-| channelRpcTimeout | Continuation timeout in milliseconds for RPC calls in channels. |
-| disableNio | Enables or disables the Nio mode. Default is false, it is using Nio. Set to true to disable the Nio Mode.|
-| consumerThreadPoolSize | Size of the thread pool for the AMQP Consumer.|  
+| workPoolTimeout                   | Timeout in milliseconds for work pool enqueueing. The WorkPool dispatches several types of responses from the broker (e.g. deliveries). A high-traffic client with slow consumers can exhaust the work pool and compromise the whole connection (by e.g. letting the broker saturate the receive TCP buffers). Setting a timeout would make the connection fail early and avoid hard-to-diagnose TCP connection failure. Note this shouldn't happen with clients that set appropriate QoS values.|
+| channelRpcTimeout                 | Continuation timeout in milliseconds for RPC calls in channels. |
+| disableNio                        | Enables or disables the Nio mode. Default is false, it is using Nio. Set to true to disable the Nio Mode.|
+| consumerThreadPoolSize            | Size of the thread pool for the AMQP Consumer.|  
 
 Example: 
 <p align="center"><img src="/screenshots/connect.png" alt="Connect" /></p>
