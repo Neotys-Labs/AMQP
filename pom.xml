@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.neotys</groupId>
 		<artifactId>super-pom</artifactId>
-		<version>3.1.18</version>
+		<version>3.1.28</version>
 	</parent>
 	<groupId>com.neotys.amqp</groupId>
 	<artifactId>neotys-advanced-action-amqp</artifactId>
@@ -29,15 +29,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.rabbitmq</groupId>
 			<artifactId>amqp-client</artifactId>
-			<version>5.2.0</version>
+			<version>5.15.0</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-api</artifactId>
